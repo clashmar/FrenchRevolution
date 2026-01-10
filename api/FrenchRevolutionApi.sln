@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Domain", "FrenchRevolution.Domain\FrenchRevolution.Domain.csproj", "{5629EDAD-B445-492C-B667-FBA6ECCD979D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Infrastructure", "FrenchRevolution.Infrastructure\FrenchRevolution.Infrastructure.csproj", "{AB1175A0-787F-4FBF-9656-3F4313A7A26A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application", "FrenchRevolution.Application\FrenchRevolution.Application.csproj", "{BCDC7D66-5975-4182-B413-3A4586CE0B66}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5629EDAD-B445-492C-B667-FBA6ECCD979D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5629EDAD-B445-492C-B667-FBA6ECCD979D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5629EDAD-B445-492C-B667-FBA6ECCD979D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5629EDAD-B445-492C-B667-FBA6ECCD979D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB1175A0-787F-4FBF-9656-3F4313A7A26A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB1175A0-787F-4FBF-9656-3F4313A7A26A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB1175A0-787F-4FBF-9656-3F4313A7A26A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB1175A0-787F-4FBF-9656-3F4313A7A26A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
