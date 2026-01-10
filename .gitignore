@@ -1,0 +1,66 @@
+# Build artefacts
+**/bin/
+**/obj/
+**/out/
+
+# User files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vspscc
+*.vssscc
+*.vcxproj.user
+*.csproj.user
+
+# IDE folders
+.vscode/
+.vs/
+.idea/
+*.ide
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+project.assets.json
+project.nuget.cache
+*.lock.json
+*.g.props
+*.g.targets
+
+## Rider / ReSharper
+*.DotSettings.user
+*.DotSettings
+_ReSharper.Caches/
+*.resharper
+
+## ASP.NET Core
+*.secrets.json
+
+## EF Core Migrations
+**/Migrations/*.Designer.cs
+**/Migrations/*.csproj
+
+## Test results
+**/TestResults/
+**/coverage/
+*.coverage
+*.coveragexml
+
+# Docker
+**/.env
+
+# OS / Misc
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+Icon?
+._*
+*.log
+*.tmp
+*.bak
+*.swp
+*~
