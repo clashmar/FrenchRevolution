@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application", "FrenchRevolution.Application\FrenchRevolution.Application.csproj", "{BCDC7D66-5975-4182-B413-3A4586CE0B66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Contracts", "FrenchRevolution.Contracts\FrenchRevolution.Contracts.csproj", "{EAD9BF5D-999B-4202-8A64-3188A8582F73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.UnitTests", "FrenchRevolution.UnitTests\FrenchRevolution.UnitTests.csproj", "{64785023-1D04-49AB-AEAD-0D1C8971D5EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +34,13 @@ Global
 		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCDC7D66-5975-4182-B413-3A4586CE0B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

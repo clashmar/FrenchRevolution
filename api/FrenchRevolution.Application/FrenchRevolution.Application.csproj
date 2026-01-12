@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="MediatR" Version="14.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
           <PrivateAssets>all</PrivateAssets>
@@ -17,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FrenchRevolution.Contracts\FrenchRevolution.Contracts.csproj" />
       <ProjectReference Include="..\FrenchRevolution.Domain\FrenchRevolution.Domain.csproj" />
       <ProjectReference Include="..\FrenchRevolution.Infrastructure\FrenchRevolution.Infrastructure.csproj" />
     </ItemGroup>

@@ -1,5 +1,5 @@
+using FrenchRevolution.Application.Characters.Handlers;
 using FrenchRevolution.Domain.Repositories;
-using FrenchRevolution.Domain.Services;
 using FrenchRevolution.Infrastructure.Data;
 using FrenchRevolution.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
 builder.Logging.AddConsole();
 builder.Logging.AddDebug();
 
@@ -18,7 +17,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         sqlOptions => sqlOptions.MigrationsAssembly("FrenchRevolution.Infrastructure"))
 );
 
-builder.Services.AddScoped<ICharacterService, CharacterService>();
+// MediatR
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblyContaining<CreateCharacterHandler>();
+    cfg.LicenseKey = builder.Configuration["Mediator:LicenseKey"];
+});
+
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 
 var app = builder.Build();

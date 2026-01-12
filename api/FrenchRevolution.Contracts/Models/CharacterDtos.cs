@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using FrenchRevolution.Domain.Entities;
 
-namespace FrenchRevolution.Application.Models;
+namespace FrenchRevolution.Contracts.Models;
 
-public sealed record CharacterResponse(
+public sealed record CharacterResponseDto(
     Guid Id,
     string Name,
     string Profession,
@@ -11,17 +11,17 @@ public sealed record CharacterResponse(
     DateTime DateOfDeath
 )
 {
-    public static implicit operator CharacterResponse(Character c) =>
+    public static implicit operator CharacterResponseDto(Character c) =>
         new(c.Id, c.Name, c.Profession, c.DateOfBirth, c.DateOfDeath);
 }
 
-public sealed record CharacterRequest(
+public sealed record CharacterRequestDto(
     [Required] string Name,
     [Required] string Profession,
     [Required] DateTime DateOfBirth,
     [Required] DateTime DateOfDeath
 )
 {
-    public static implicit operator Character(CharacterRequest r) =>
+    public static implicit operator Character(CharacterRequestDto r) =>
         new(r.Name, r.Profession, r.DateOfBirth, r.DateOfDeath);
 }
