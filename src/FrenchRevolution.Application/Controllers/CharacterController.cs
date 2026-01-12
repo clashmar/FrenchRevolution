@@ -6,19 +6,19 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrenchRevolution.Application.Controllers;
 
-public class CharacterController(IMediator mediator) : BaseApiController
+public class CharacterController(ISender sender) : BaseApiController
 {
     [HttpGet] 
     public async Task<ActionResult<List<CharacterResponseDto>>> GetAll()
     {
-        var characters = await mediator.Send(new GetAllCharactersQuery());
+        var characters = await sender.Send(new GetAllCharactersQuery());
         return Ok(characters.Select(c => c).ToList());
     }
     
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CharacterResponseDto>> GetById(Guid id)
     {
-        var character = await mediator.Send(new GetCharacterByIdQuery(id));
+        var character = await sender.Send(new GetCharacterByIdQuery(id));
         
         return character is null ? 
             NotFound("Unable to find character.") : 
@@ -26,30 +26,25 @@ public class CharacterController(IMediator mediator) : BaseApiController
     }
 
     [HttpPost]
-    public async Task<ActionResult<CharacterResponseDto>> Create(CharacterRequestDto request)
+    public async Task<ActionResult<Guid>> Create(CharacterRequestDto request)
     {
-        var character = await mediator.Send(new CreateCharacterCommand(request));
-        return character is null 
-            ? BadRequest("Unable to create character.")
-            : CreatedAtAction(
-                nameof(GetById), 
-                new { id = character.Id },
-                character);
+        var result = await sender.Send(new CreateCharacterCommand(request));
+        return Ok(result);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<ActionResult<CharacterResponseDto>> Update(Guid id, CharacterRequestDto request)
     {
-        var character = await mediator.Send(new UpdateCharacterCommand(id, request));
-        return character is null
-            ? NotFound("Unable to update character.")
-            : Ok(character);
+        var updated = await sender.Send(new UpdateCharacterCommand(id, request));
+        return updated
+            ? NoContent()
+            : NotFound("Unable to update character.");
     }
 
     [HttpDelete("{id:guid}")] 
     public async Task<ActionResult> Delete(Guid id)
     {
-        var deleted = await mediator.Send(new DeleteCharacterCommand(id));
+        var deleted = await sender.Send(new DeleteCharacterCommand(id));
         return deleted
             ? NoContent()
             : NotFound("Unable to delete character.");

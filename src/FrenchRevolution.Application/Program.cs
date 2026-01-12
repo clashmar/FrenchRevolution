@@ -25,6 +25,7 @@ builder.Services.AddMediatR(cfg =>
 });
 
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 

@@ -27,6 +27,11 @@ public class Character
         ArgumentException.ThrowIfNullOrEmpty(name, nameof(name));
         ArgumentException.ThrowIfNullOrEmpty(profession, nameof(profession));
         
+        if (dateOfDeath < dateOfBirth)
+        {
+            throw new InvalidOperationException("Date of death cannot be earlier than date of birth.");
+        }
+        
         Id = Guid.NewGuid();
         Name = name;
         Profession = profession;

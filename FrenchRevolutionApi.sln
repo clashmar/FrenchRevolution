@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Domain", "FrenchRevolution.Domain\FrenchRevolution.Domain.csproj", "{5629EDAD-B445-492C-B667-FBA6ECCD979D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Domain", "src\FrenchRevolution.Domain\FrenchRevolution.Domain.csproj", "{5629EDAD-B445-492C-B667-FBA6ECCD979D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Infrastructure", "FrenchRevolution.Infrastructure\FrenchRevolution.Infrastructure.csproj", "{AB1175A0-787F-4FBF-9656-3F4313A7A26A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Infrastructure", "src\FrenchRevolution.Infrastructure\FrenchRevolution.Infrastructure.csproj", "{AB1175A0-787F-4FBF-9656-3F4313A7A26A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application", "FrenchRevolution.Application\FrenchRevolution.Application.csproj", "{BCDC7D66-5975-4182-B413-3A4586CE0B66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application", "src\FrenchRevolution.Application\FrenchRevolution.Application.csproj", "{BCDC7D66-5975-4182-B413-3A4586CE0B66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Contracts", "FrenchRevolution.Contracts\FrenchRevolution.Contracts.csproj", "{EAD9BF5D-999B-4202-8A64-3188A8582F73}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Contracts", "src\FrenchRevolution.Contracts\FrenchRevolution.Contracts.csproj", "{EAD9BF5D-999B-4202-8A64-3188A8582F73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.UnitTests", "FrenchRevolution.UnitTests\FrenchRevolution.UnitTests.csproj", "{64785023-1D04-49AB-AEAD-0D1C8971D5EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application.UnitTests", "test\FrenchRevolution.Application.UnitTests\FrenchRevolution.Application.UnitTests.csproj", "{A2A729C4-00D5-4887-AEF7-043B6862B23D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +38,9 @@ Global
 		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAD9BF5D-999B-4202-8A64-3188A8582F73}.Release|Any CPU.Build.0 = Release|Any CPU
-		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{64785023-1D04-49AB-AEAD-0D1C8971D5EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -9,10 +9,9 @@ public class GetAllCharactersHandler(
     ICharacterRepository repository
 ) : IRequestHandler<GetAllCharactersQuery, IEnumerable<Character>>
 {
-    async Task<IEnumerable<Character>> IRequestHandler<GetAllCharactersQuery, IEnumerable<Character>>
-        .Handle(
-            GetAllCharactersQuery query,
-            CancellationToken cancellationToken)
+    public async Task<IEnumerable<Character>> Handle(
+        GetAllCharactersQuery query,
+        CancellationToken cancellationToken)
     {
         return await repository.GetAllAsync();
     }

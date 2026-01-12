@@ -5,13 +5,13 @@ using MediatR;
 namespace FrenchRevolution.Application.Characters.Handlers;
 
 public class DeleteCharacterHandler(
-    ICharacterRepository repository
+    ICharacterRepository repository,
+    IUnitOfWork unitOfWork
 ) : IRequestHandler<DeleteCharacterCommand, bool>
 {
-    async Task<bool> IRequestHandler<DeleteCharacterCommand, bool>
-        .Handle(
-            DeleteCharacterCommand command,
-            CancellationToken cancellationToken)
+    public async Task<bool> Handle(
+        DeleteCharacterCommand command,
+        CancellationToken cancellationToken)
     {
         var character = await repository.GetByIdAsync(command.Id);
 
@@ -20,6 +20,8 @@ public class DeleteCharacterHandler(
             return false;
         }
         
-        return await repository.DeleteAsync(character);
+        repository.Delete(character);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

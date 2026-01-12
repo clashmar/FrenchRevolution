@@ -9,8 +9,7 @@ public class GetCharacterByIdHandler(
     ICharacterRepository repository
 ) : IRequestHandler<GetCharacterByIdQuery, Character?>
 {
-    async Task<Character?> IRequestHandler<GetCharacterByIdQuery, Character?>
-        .Handle(
+    public async Task<Character?> Handle(
             GetCharacterByIdQuery command,
             CancellationToken cancellationToken)
     {
