@@ -21,10 +21,10 @@ public class UpdateCharacterHandler(
         }
         
         character.Update(
-            command.Character.Name,
-            command.Character.Profession,
-            command.Character.DateOfBirth,
-            command.Character.DateOfDeath
+            command.Request.Name,
+            command.Request.Profession,
+            command.Request.DateOfBirth,
+            command.Request.DateOfDeath
         );
         
         repository.Update(character);

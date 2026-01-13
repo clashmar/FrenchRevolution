@@ -16,10 +16,10 @@ public sealed record CharacterResponseDto(
 }
 
 public sealed record CharacterRequestDto(
-    [Required] string Name,
-    [Required] string Profession,
-    [Required] DateTime DateOfBirth,
-    [Required] DateTime DateOfDeath
+    string Name,
+    string Profession,
+    DateTime DateOfBirth,
+    DateTime DateOfDeath
 )
 {
     public static implicit operator Character(CharacterRequestDto r) =>

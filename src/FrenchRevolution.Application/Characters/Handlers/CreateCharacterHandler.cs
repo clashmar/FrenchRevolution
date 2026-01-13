@@ -14,7 +14,7 @@ internal sealed class CreateCharacterHandler(
         CreateCharacterCommand command,
         CancellationToken cancellationToken)
     {
-        var result = repository.Add(command.Character);
+        var result = repository.Add(command.Request);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return result;
     }

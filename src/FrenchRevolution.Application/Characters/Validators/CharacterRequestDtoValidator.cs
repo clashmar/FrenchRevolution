@@ -1,0 +1,37 @@
+using FluentValidation;
+using FrenchRevolution.Contracts.Models;
+
+namespace FrenchRevolution.Application.Characters.Validators;
+
+public class CharacterRequestDtoValidator : AbstractValidator<CharacterRequestDto>
+{
+    public CharacterRequestDtoValidator()
+    {
+        // Name 
+        RuleFor(x => x.Name)
+            .NotNull().NotEmpty().WithMessage("Name is required.")
+            .MinimumLength(4).WithMessage("Name must be at least 3 characters long.");
+        
+        // Profession
+        RuleFor(x => x.Profession)
+            .NotNull().NotEmpty().WithMessage("Profession is required.")
+            .MinimumLength(4).WithMessage("Profession must be at least 3 characters long.");
+        
+        // Date of birth
+        RuleFor(x => x.DateOfBirth)
+            .NotEmpty().WithMessage("Date of birth is required.")
+            .Must(BeInPast).WithMessage("Date of birth must be in the past.")
+            .LessThan(x => x.DateOfDeath).WithMessage("Date of birth must be before date of death.");
+        
+        // Date of death
+        RuleFor(x => x.DateOfDeath)
+            .NotEmpty().WithMessage("Date of death is required.")
+            .Must(BeInPast).WithMessage("Date of death must be in the past.")
+            .GreaterThan(x => x.DateOfBirth).WithMessage("Date of dath must be after date of birth.");
+    }
+
+    private static bool BeInPast(DateTime date)
+    {
+        return date < DateTime.Today;
+    }
+}
