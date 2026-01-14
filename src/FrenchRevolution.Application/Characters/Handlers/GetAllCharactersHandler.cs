@@ -1,5 +1,6 @@
 using FrenchRevolution.Application.Characters.Queries;
-using FrenchRevolution.Domain.Entities;
+using FrenchRevolution.Contracts.Mapping;
+using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.Domain.Repositories;
 using MediatR;
 
@@ -7,12 +8,13 @@ namespace FrenchRevolution.Application.Characters.Handlers;
 
 public class GetAllCharactersHandler(
     ICharacterRepository repository
-) : IRequestHandler<GetAllCharactersQuery, IEnumerable<Character>>
+) : IRequestHandler<GetAllCharactersQuery, IEnumerable<CharacterResponseDto>>
 {
-    public async Task<IEnumerable<Character>> Handle(
+    public async Task<IEnumerable<CharacterResponseDto>> Handle(
         GetAllCharactersQuery query,
         CancellationToken cancellationToken)
     {
-        return await repository.GetAllAsync();
+        return (await repository.GetAllAsync())
+            .Select(c => c.ToResponseDto());
     }
 }

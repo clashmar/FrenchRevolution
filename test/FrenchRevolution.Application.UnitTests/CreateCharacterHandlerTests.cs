@@ -1,7 +1,7 @@
 ﻿using FrenchRevolution.Application.Characters.Commands;
 using FrenchRevolution.Application.Characters.Handlers;
 using FrenchRevolution.Contracts.Models;
-using FrenchRevolution.Domain.Entities;
+using FrenchRevolution.Domain.Data;
 using FrenchRevolution.Domain.Repositories;
 using Moq;
 

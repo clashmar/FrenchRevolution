@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using FrenchRevolution.Domain.Entities;
+using FrenchRevolution.Domain.Data;
 
 namespace FrenchRevolution.Contracts.Models;
 
@@ -9,11 +8,7 @@ public sealed record CharacterResponseDto(
     string Profession,
     DateTime DateOfBirth,
     DateTime DateOfDeath
-)
-{
-    public static implicit operator CharacterResponseDto(Character c) =>
-        new(c.Id, c.Name, c.Profession, c.DateOfBirth, c.DateOfDeath);
-}
+);
 
 public sealed record CharacterRequestDto(
     string Name,

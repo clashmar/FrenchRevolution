@@ -1,4 +1,4 @@
-using FrenchRevolution.Domain.Entities;
+using FrenchRevolution.Domain.Data;
 using FrenchRevolution.Domain.Repositories;
 using FrenchRevolution.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +14,9 @@ public class CharacterRepository(
         return await context.Characters.ToListAsync();
     }
 
-    public async Task<Character?> GetByIdAsync(Guid id)
+    public async Task<Character?> GetByIdAsync(Guid id) 
     {
-        return await context.Characters.FindAsync(id);
+        return await context.Characters.FindAsync(id); 
     }
 
     public Guid Add(Character character)
@@ -30,7 +30,7 @@ public class CharacterRepository(
         context.Characters.Update(character);
     }
 
-    public void Delete(Character character)
+    public void Remove(Character character)
     {
         context.Characters.Remove(character);
     }

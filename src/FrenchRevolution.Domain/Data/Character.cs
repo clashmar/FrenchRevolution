@@ -1,16 +1,16 @@
-using System.ComponentModel.DataAnnotations;
 using FrenchRevolution.Domain.Exceptions;
+using FrenchRevolution.Domain.Primitives;
 
-namespace FrenchRevolution.Domain.Entities;
+namespace FrenchRevolution.Domain.Data;
 
-public class Character
-{
-    [Key] public Guid Id { get; private set; }
-    [MaxLength(100)] public string Name { get; private set; } = string.Empty;
-    [MaxLength(100)] public string Profession { get; private set; } = string.Empty;
+public class Character : Entity
+{ 
+    public Guid Id { get; private set; }
+    public string Name { get; private set; } = string.Empty;
+    public string Profession { get; private set; } = string.Empty;
     public DateTime DateOfBirth { get; private set; }
     public DateTime DateOfDeath { get; private set; }
-
+    
     private Character() {}
     
     public Character(

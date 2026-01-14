@@ -9,7 +9,7 @@ public class DeleteCharacterHandler(
     IUnitOfWork unitOfWork
 ) : IRequestHandler<DeleteCharacterCommand, bool>
 {
-    public async Task<bool> Handle(
+    public async Task<bool> Handle( 
         DeleteCharacterCommand command,
         CancellationToken cancellationToken)
     {
@@ -20,7 +20,7 @@ public class DeleteCharacterHandler(
             return false;
         }
         
-        repository.Delete(character);
+        repository.Remove(character);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return true;
     }
