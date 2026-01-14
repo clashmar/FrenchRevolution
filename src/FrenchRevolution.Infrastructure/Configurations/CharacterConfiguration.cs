@@ -33,6 +33,11 @@ internal class CharacterConfiguration : IEntityTypeConfiguration<Character>
                 v => v,
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         
+        builder.HasMany(c => c.CharacterRoles)
+            .WithOne(cr => cr.Character)
+            .HasForeignKey(cr => cr.CharacterId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
         builder.HasQueryFilter(p => !p.IsDeleted); 
     }
 }

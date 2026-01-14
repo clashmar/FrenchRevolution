@@ -3,28 +3,26 @@ using FrenchRevolution.Domain.Primitives;
 
 namespace FrenchRevolution.Domain.Data;
 
-public class Character : Entity
+public sealed class Character : Entity
 { 
-    public Guid Id { get; private set; }
-    public string Name { get; private set; } = string.Empty;
-    public string Profession { get; private set; } = string.Empty;
+    public string Name { get; private set; }
+    public string Profession { get; private set; }
+    public List<CharacterRole> CharacterRoles { get; private set; } = [];
     public DateTime DateOfBirth { get; private set; }
     public DateTime DateOfDeath { get; private set; }
     
-    private Character() {}
     
     public Character(
         string name, 
         string profession,
         DateTime dateOfBirth,
         DateTime dateOfDeath
-        )
+        ) : base(Guid.NewGuid())
     {
         ValidateRequiredProperty(name, nameof(name));
         ValidateRequiredProperty(profession, nameof(profession));
         ValidateLifeSpan(dateOfBirth, dateOfDeath);
         
-        Id = Guid.NewGuid();
         Name = name;
         Profession = profession;
         DateOfBirth = DateTime.SpecifyKind(dateOfBirth, DateTimeKind.Utc);
@@ -46,6 +44,28 @@ public class Character : Entity
         Profession = profession;
         DateOfBirth = DateTime.SpecifyKind(dateOfBirth, DateTimeKind.Utc);
         DateOfDeath = DateTime.SpecifyKind(dateOfDeath, DateTimeKind.Utc);
+    }
+    
+    public void AssignRole(Role role, DateTime from, DateTime to)
+    {
+        if (from > to)
+        {
+            throw new InvalidTimeSpanException(from, to);
+        }
+
+        var characterRole = new CharacterRole(Id, role.Id, from, to);
+        CharacterRoles.Add(characterRole);
+    }
+
+    public void ClearRoles()
+    {
+        CharacterRoles.Clear();
+    }
+
+    public void UpdateRoles(IEnumerable<CharacterRole> newRoles)
+    {
+        CharacterRoles.Clear();
+        CharacterRoles.AddRange(newRoles);
     }
 
     private static void ValidateRequiredProperty(string value, string propertyName)

@@ -11,9 +11,9 @@ public class DeleteCharacterHandler(
 {
     public async Task<bool> Handle( 
         DeleteCharacterCommand command,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        var character = await repository.GetByIdAsync(command.Id);
+        var character = await repository.GetByIdAsync(command.Id, ct);
 
         if (character is null)
         {
@@ -21,7 +21,7 @@ public class DeleteCharacterHandler(
         }
         
         repository.Remove(character);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(ct);
         return true;
     }
 }

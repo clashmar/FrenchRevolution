@@ -9,7 +9,8 @@ namespace FrenchRevolution.Application.UnitTests;
 
 public class CreateCharacterHandlerTests  
 {
-    private readonly Mock<ICharacterRepository> _mockRepository = new();
+    private readonly Mock<ICharacterRepository> _mockCharacterRepository = new();
+    private readonly Mock<IRoleRepository> _mockRoleRepository = new();
     private readonly Mock<IUnitOfWork> _mockUnitOfWork = new();
 
     private const string Name = "Maximilen Robespierre";
@@ -25,11 +26,12 @@ public class CreateCharacterHandlerTests
             Name,
             Profession,
             _dateOfBirth,
-            _dateOfDeath
+            _dateOfDeath,
+            []
         );
  
         var command = new CreateCharacterCommand(dto);
-        var handler = new CreateCharacterHandler(_mockRepository.Object, _mockUnitOfWork.Object);
+        var handler = SetupCreateCharacterHandler();
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -37,12 +39,21 @@ public class CreateCharacterHandlerTests
         // Assert
         Assert.NotEqual(Guid.Empty, result);
         
-        _mockRepository.Verify(
+        _mockCharacterRepository.Verify(
             m => m.Add(It.IsAny<Character>()),
             Times.Once);
 
         _mockUnitOfWork.Verify(
             m => m.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+    
+    private CreateCharacterHandler SetupCreateCharacterHandler()
+    {
+        return new CreateCharacterHandler(
+            _mockCharacterRepository.Object, 
+            _mockRoleRepository.Object,
+            _mockUnitOfWork.Object
+        );
     }
 }

@@ -7,15 +7,17 @@ public sealed record CharacterResponseDto(
     string Name,
     string Profession,
     DateTime DateOfBirth,
-    DateTime DateOfDeath
+    DateTime DateOfDeath,
+    IReadOnlyCollection<RoleResponseDto> Roles
 );
 
 public sealed record CharacterRequestDto(
     string Name,
     string Profession,
     DateTime DateOfBirth,
-    DateTime DateOfDeath
-)
+    DateTime DateOfDeath,
+    IReadOnlyCollection<RoleRequestDto> Roles
+    )
 {
     public static implicit operator Character(CharacterRequestDto r) =>
         new(r.Name, r.Profession, r.DateOfBirth, r.DateOfDeath);

@@ -12,9 +12,9 @@ public class GetAllCharactersHandler(
 {
     public async Task<IEnumerable<CharacterResponseDto>> Handle(
         GetAllCharactersQuery query,
-        CancellationToken cancellationToken)
+        CancellationToken ct)
     {
-        return (await repository.GetAllAsync())
+        return (await repository.GetAllAsync(ct))
             .Select(c => c.ToResponseDto());
     }
 }

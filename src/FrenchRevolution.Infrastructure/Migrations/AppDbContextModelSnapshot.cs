@@ -56,6 +56,97 @@ namespace FrenchRevolution.Infrastructure.Migrations
 
                     b.ToTable("Characters");
                 });
+
+            modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterRole", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CharacterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("CharacterRoles");
+                });
+
+            modelBuilder.Entity("FrenchRevolution.Domain.Data.Role", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Title")
+                        .IsUnique();
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterRole", b =>
+                {
+                    b.HasOne("FrenchRevolution.Domain.Data.Character", "Character")
+                        .WithMany("CharacterRoles")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FrenchRevolution.Domain.Data.Role", "Role")
+                        .WithMany("CharacterRoles")
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+
+                    b.Navigation("Role");
+                });
+
+            modelBuilder.Entity("FrenchRevolution.Domain.Data.Character", b =>
+                {
+                    b.Navigation("CharacterRoles");
+                });
+
+            modelBuilder.Entity("FrenchRevolution.Domain.Data.Role", b =>
+                {
+                    b.Navigation("CharacterRoles");
+                });
 #pragma warning restore 612, 618
         }
     }

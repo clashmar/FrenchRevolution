@@ -12,9 +12,9 @@ public class GetCharacterByIdHandler(
 {
     public async Task<CharacterResponseDto?> Handle(
             GetCharacterByIdQuery command,
-            CancellationToken cancellationToken)
+            CancellationToken ct)
     {
-        var character = await repository.GetByIdAsync(command.Id);
+        var character = await repository.GetByIdAsync(command.Id, ct);
         return character?.ToResponseDto();
     }
 }

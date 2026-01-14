@@ -12,7 +12,13 @@ public static class CharacterResponseMapper
             character.Name,
             character.Profession,
             character.DateOfBirth,
-            character.DateOfDeath
+            character.DateOfDeath,
+            character.CharacterRoles
+                .Select(cr => new RoleResponseDto(
+                    cr.Role.Title,
+                    cr.From,
+                    cr.To))
+                .ToList()
         );
     }
 }

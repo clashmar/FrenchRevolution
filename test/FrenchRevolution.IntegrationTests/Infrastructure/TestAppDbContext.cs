@@ -1,36 +1,24 @@
 using FrenchRevolution.Domain.Data;
 using FrenchRevolution.Domain.Primitives;
+using FrenchRevolution.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FrenchRevolution.Infrastructure.Data;
+namespace FrenchRevolution.IntegrationTests.Infrastructure;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+// TODO: Remove duplication with AppDbContext
+public class TestAppDbContext(DbContextOptions<AppDbContext> options) : AppDbContext(options)
 {
-    public DbSet<Character> Characters => Set<Character>();
-    public DbSet<Role> Roles => Set<Role>();
-    public DbSet<CharacterRole> CharacterRoles => Set<CharacterRole>();
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder
-            .UseSeeding((context, _) =>
-            {
-                SeedData.SeedStaticData(this);
-                context.SaveChanges();
-
-            }).UseAsyncSeeding(async (context, _, cancellationToken) =>
-            {
-                await SeedData.SeedStaticDataAsync(this, cancellationToken);
-                await context.SaveChangesAsync(cancellationToken);
-            });
+        // Don't call base to skip seeding
     }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }
-
+    
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         var softDeleteEntries = ChangeTracker.Entries<ISoftDeletable>()
@@ -43,7 +31,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
             entityEntry.Property(nameof(ISoftDeletable.DeletedAt)).CurrentValue = DateTime.UtcNow;
         }
         
-        var result = await base.SaveChangesAsync(cancellationToken);
-        return result;
+        return await base.SaveChangesAsync(cancellationToken);
     }
 }

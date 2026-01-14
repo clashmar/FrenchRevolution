@@ -1,5 +1,6 @@
 using FluentValidation;
 using FrenchRevolution.Contracts.Models;
+using FrenchRevolution.Infrastructure.Configurations;
 
 namespace FrenchRevolution.Application.Characters.Validators;
 
@@ -27,7 +28,13 @@ public class CharacterRequestDtoValidator : AbstractValidator<CharacterRequestDt
         RuleFor(x => x.DateOfDeath)
             .NotEmpty().WithMessage("Date of death is required.")
             .Must(BeInPast).WithMessage("Date of death must be in the past.")
-            .GreaterThan(x => x.DateOfBirth).WithMessage("Date of dath must be after date of birth.");
+            .GreaterThan(x => x.DateOfBirth).WithMessage("Date of death must be after date of birth.");
+
+        // Roles
+        RuleFor(x => x.Roles)
+            .Must(roles => roles
+                .All(r => BeInPast(r.From) && BeInPast(r.To)))
+                .WithMessage("All role dates must be in the past.");
     }
 
     private static bool BeInPast(DateTime date)

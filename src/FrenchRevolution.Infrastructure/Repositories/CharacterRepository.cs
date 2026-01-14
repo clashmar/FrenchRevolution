@@ -9,14 +9,20 @@ public class CharacterRepository(
     AppDbContext context
     ) : ICharacterRepository
 {
-    public async Task<IEnumerable<Character>> GetAllAsync()
+    public async Task<IEnumerable<Character>> GetAllAsync(CancellationToken ct = default)
     {
-        return await context.Characters.ToListAsync();
+        return await context.Characters
+            .Include(c => c.CharacterRoles)
+                .ThenInclude(rc => rc.Role)
+            .ToListAsync(ct);
     }
 
-    public async Task<Character?> GetByIdAsync(Guid id) 
+    public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct = default) 
     {
-        return await context.Characters.FindAsync(id); 
+        return await context.Characters
+            .Include(c => c.CharacterRoles)
+                .ThenInclude(cr => cr.Role)
+            .FirstOrDefaultAsync(c => c.Id == id, ct);
     }
 
     public Guid Add(Character character)
