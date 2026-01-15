@@ -35,6 +35,7 @@ namespace FrenchRevolution.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    NormalizedTitle = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
@@ -85,9 +86,9 @@ namespace FrenchRevolution.Infrastructure.Migrations
                 column: "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Roles_Title",
+                name: "IX_Roles_NormalizedTitle",
                 table: "Roles",
-                column: "Title",
+                column: "NormalizedTitle",
                 unique: true);
         }
 

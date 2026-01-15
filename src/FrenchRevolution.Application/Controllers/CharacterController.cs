@@ -28,8 +28,11 @@ public class CharacterController(ISender sender) : BaseApiController
     [HttpPost]
     public async Task<ActionResult<Guid>> Create(CharacterRequestDto request)
     {
-        var result = await sender.Send(new CreateCharacterCommand(request));
-        return Ok(result);
+        var guid = await sender.Send(new CreateCharacterCommand(request));
+        return CreatedAtAction(
+            nameof(GetById),             
+            new { id = guid },                
+            guid); 
     }
 
     [HttpPut("{id:guid}")]

@@ -106,6 +106,11 @@ namespace FrenchRevolution.Infrastructure.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("NormalizedTitle")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -113,7 +118,7 @@ namespace FrenchRevolution.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Title")
+                    b.HasIndex("NormalizedTitle")
                         .IsUnique();
 
                     b.ToTable("Roles");

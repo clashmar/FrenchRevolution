@@ -2,6 +2,7 @@ using FluentValidation;
 using FrenchRevolution.Application.Exceptions;
 using FrenchRevolution.Application.Validation;
 using FrenchRevolution.Domain.Repositories;
+using FrenchRevolution.Infrastructure.Cache;
 using FrenchRevolution.Infrastructure.Data;
 using FrenchRevolution.Infrastructure.Repositories;
 using MediatR;
@@ -59,7 +60,15 @@ builder.Services.AddMediatR(cfg =>
     cfg.LicenseKey = builder.Configuration["Mediator:LicenseKey"];
 });
 
+// Redis
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "FrenchRevolution";
+});
+
 // Services
+builder.Services.AddSingleton<ICacheAside, CacheAside>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

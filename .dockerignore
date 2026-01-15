@@ -1,0 +1,23 @@
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+*.sln.DotSettings.user
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.swp
+
+# Other
+.git/
+.gitignore
+
+# Docker files
+Docker/

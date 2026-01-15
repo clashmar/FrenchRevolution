@@ -1,24 +1,26 @@
 ﻿using FrenchRevolution.Application.Characters.Handlers;
 using FrenchRevolution.Application.Characters.Queries;
+using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.IntegrationTests.Fixtures;
 
 namespace FrenchRevolution.IntegrationTests.Characters;
 
 public class GetAllCharactersHandlerTests(
     DatabaseFixture databaseFixture
-    ) : IntegrationTestBase(databaseFixture)
+    ) : CharacterTestBase(databaseFixture)
 {
     [Fact]
     public async Task Handle_ReturnsEmptyList_WhenNoCharactersExist()
     {
         // Arrange
-        var handler = new GetAllCharactersHandler(CharacterRepository);
+        var handler = new GetAllCharactersHandler(CacheAside, CharacterRepository);
         var query = new GetAllCharactersQuery();
 
         // Act
         var result = await handler.Handle(query, CancellationToken.None);
 
         // Assert
+        Assert.NotNull(result);
         Assert.Empty(result);
     }
     
@@ -26,54 +28,47 @@ public class GetAllCharactersHandlerTests(
     public async Task Handle_ReturnsAllCharacters_WhenCharactersExist()
     {
         // Arrange
-        await SetupDefaultCharacters();
+        await SetupCharacter(MaximilienRobespierre, Lawyer, President);
+        await SetupCharacter(CamilleDesmoulins, Journalist, Deputy);
 
-        var handler = new GetAllCharactersHandler(CharacterRepository);
+        var handler = new GetAllCharactersHandler(CacheAside, CharacterRepository);
         var query = new GetAllCharactersQuery();
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
-
+        var characters = await handler.Handle(query, CancellationToken.None);
+        
         // Assert
-        var characters = result.ToList();
         Assert.Equal(2, characters.Count);
         
-        var robespierre = characters.First(c => c.Name == Robespierre);
+        var robespierre = characters.First(c => c.Name == MaximilienRobespierre);
         Assert.Equal(Lawyer, robespierre.Profession);
-        Assert.Single(robespierre.Roles);
+        Assert.Equal(President, robespierre.Roles.First().Title);
         
-        var desmoulins = characters.First(c => c.Name == Desmoulins);
+        var desmoulins = characters.First(c => c.Name == CamilleDesmoulins);
         Assert.Equal(Journalist, desmoulins.Profession);
-        Assert.Empty(desmoulins.Roles);
+        Assert.Equal(Deputy, desmoulins.Roles.First().Title);
     }
     
-    private const string Robespierre = "Maximilen Robespierre";
-    private const string Desmoulins = "Camille Desmoulins";
-    private const string Lawyer = "Lawyer";
-    private const string Journalist = "Journalist";
-    private const string PresidentOfTheNationalConvention = "President of the National Convention";
-
-    private readonly DateTime _from = new(1791, 5, 6);
-    private readonly DateTime _to = new(1794, 5, 6);
-    
-    private async Task SetupDefaultCharacters()
+    [Fact]
+    public async Task Handle_ReturnsCachedList_WhenCacheExists()
     {
         // Arrange
-        TestData.CreateCharacter()
-            .WithName(Robespierre)
-            .WithProfession(Lawyer)
-            .WithDates(_from, _to)
-            .WithRole(PresidentOfTheNationalConvention, 
-                _from, 
-                _to)
-            .Build();
+        await SetupCharacter(MaximilienRobespierre);
 
-        TestData.CreateCharacter()
-            .WithName(Desmoulins)
-            .WithProfession(Journalist)
-            .WithDates(_from, _to)
-            .Build();
-
-        await TestData.SaveAsync();
+        var handler = new GetAllCharactersHandler(CacheAside, CharacterRepository);
+        var query = new GetAllCharactersQuery();
+        
+        // Act
+        var characters = await handler.Handle(query, CancellationToken.None);
+        
+        // Assert the character was added correctly
+        Assert.Single(characters);
+        
+        // Add another character
+        await SetupCharacter(GeorgesDanton);
+        
+        // Assert the cached single character is returned
+        Assert.Single(characters);
+        Assert.DoesNotContain(characters, c => c.Name == GeorgesDanton);
     }
 }

@@ -5,6 +5,7 @@ using Testcontainers.PostgreSql;
 
 namespace FrenchRevolution.IntegrationTests.Fixtures;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class DatabaseFixture : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container = 
