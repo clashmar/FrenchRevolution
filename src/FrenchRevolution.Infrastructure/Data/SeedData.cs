@@ -7,11 +7,11 @@ internal static class SeedData
 {
     private static Role[] CreateRoles() =>
     [
-        new("President of the Committee of Public Safety"),
-        new("Member of the Committee of Public Safety"),
-        new("President of the National Convention"),
-        new("Deputy of the National Convention"),
-        new("Minister of Justice")
+        new("President of the Committee of Public Safety"), // 0
+        new("Member of the Committee of Public Safety"), // 1
+        new("President of the National Convention"), // 2
+        new("Deputy of the National Convention"), // 3
+        new("Minister of Justice") // 4
     ];
 
     private static Character[] CreateCharacters(Role[] roles)

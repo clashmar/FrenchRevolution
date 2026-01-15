@@ -1,4 +1,6 @@
+using System.Threading.RateLimiting;
 using FluentValidation;
+using FrenchRevolution.Application.Constants;
 using FrenchRevolution.Application.Exceptions;
 using FrenchRevolution.Application.Validation;
 using FrenchRevolution.Domain.Repositories;
@@ -24,6 +26,7 @@ builder.Services
             });
     });
 
+// Problem details
 builder.Services.AddProblemDetails(cfg =>
 { 
     cfg.CustomizeProblemDetails = context =>
@@ -39,6 +42,23 @@ builder.Services.AddOpenApi();
 builder.Logging.AddConsole();
 
 builder.Logging.AddDebug();
+
+// Rate limiting
+builder.Services.AddRateLimiter(rateLimitOptions =>
+{
+    rateLimitOptions.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    rateLimitOptions.AddPolicy(RateLimiting.FixedWindow, context => RateLimitPartition.GetFixedWindowLimiter(
+        partitionKey: context.Connection.RemoteIpAddress?.ToString() ?? RateLimiting.Unknown,
+        factory: _ => new FixedWindowRateLimiterOptions
+        {
+            Window = TimeSpan.FromSeconds(10),
+            PermitLimit = 3,
+            QueueLimit = 3,
+            QueueProcessingOrder = QueueProcessingOrder.OldestFirst
+        } 
+    ));
+});
 
 // Validation
 builder.Services.AddValidatorsFromAssemblyContaining<Program>(includeInternalTypes: true);
@@ -67,6 +87,17 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "FrenchRevolution";
 });
 
+// Health checks
+builder.Services.AddHealthChecks()
+    .AddNpgSql(
+        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "database",
+        tags: ["db", "sql", "postgres"])
+    .AddRedis(
+        builder.Configuration.GetConnectionString("Redis")!,
+        name: "redis-cache",
+        tags: ["cache", "redis"]);
+
 // Services
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
@@ -84,10 +115,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
+app.MapHealthChecks("/healthz");
+
 app.UseHttpsRedirection();
+
+app.MapControllers().RequireRateLimiting(RateLimiting.FixedWindow);
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseRateLimiter();
 
 app.Run();

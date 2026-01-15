@@ -3,7 +3,6 @@ using FrenchRevolution.Domain.Repositories;
 
 namespace FrenchRevolution.IntegrationTests.Helpers;
 
-// TODO: Move to domain
 public class TestDataBuilder(
     IRoleRepository roleRepository,
     ICharacterRepository characterRepository,

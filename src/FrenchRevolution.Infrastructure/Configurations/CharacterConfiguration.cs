@@ -38,6 +38,8 @@ internal class CharacterConfiguration : IEntityTypeConfiguration<Character>
             .HasForeignKey(cr => cr.CharacterId)
             .OnDelete(DeleteBehavior.Cascade);
         
+        builder.Property<uint>("RowVersion").IsRowVersion();
+        
         builder.HasQueryFilter(p => !p.IsDeleted); 
     }
 }

@@ -1,11 +1,10 @@
 ﻿using FrenchRevolution.Application.Characters.Handlers;
 using FrenchRevolution.Application.Characters.Queries;
-using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.IntegrationTests.Fixtures;
 
-namespace FrenchRevolution.IntegrationTests.Characters;
+namespace FrenchRevolution.IntegrationTests.Characters; 
 
-public class GetAllCharactersHandlerTests(
+public class GetAllCharactersHandlerTests( 
     DatabaseFixture databaseFixture
     ) : CharacterTestBase(databaseFixture)
 {
@@ -17,11 +16,12 @@ public class GetAllCharactersHandlerTests(
         var query = new GetAllCharactersQuery();
 
         // Act
-        var result = await handler.Handle(query, CancellationToken.None);
+        var pagedList = await handler.Handle(query, CancellationToken.None);
+        var items = pagedList.Items;
 
         // Assert
-        Assert.NotNull(result);
-        Assert.Empty(result);
+        Assert.NotNull(items);
+        Assert.Empty(items);
     }
     
     [Fact]
@@ -35,16 +35,17 @@ public class GetAllCharactersHandlerTests(
         var query = new GetAllCharactersQuery();
 
         // Act
-        var characters = await handler.Handle(query, CancellationToken.None);
+        var pagedList = await handler.Handle(query, CancellationToken.None);
+        var items = pagedList.Items;
         
         // Assert
-        Assert.Equal(2, characters.Count);
+        Assert.Equal(2, items.Count);
         
-        var robespierre = characters.First(c => c.Name == MaximilienRobespierre);
+        var robespierre = items.First(c => c.Name == MaximilienRobespierre);
         Assert.Equal(Lawyer, robespierre.Profession);
         Assert.Equal(President, robespierre.Roles.First().Title);
         
-        var desmoulins = characters.First(c => c.Name == CamilleDesmoulins);
+        var desmoulins = items.First(c => c.Name == CamilleDesmoulins);
         Assert.Equal(Journalist, desmoulins.Profession);
         Assert.Equal(Deputy, desmoulins.Roles.First().Title);
     }
@@ -59,16 +60,17 @@ public class GetAllCharactersHandlerTests(
         var query = new GetAllCharactersQuery();
         
         // Act
-        var characters = await handler.Handle(query, CancellationToken.None);
+        var pagedList = await handler.Handle(query, CancellationToken.None);
+        var items = pagedList.Items;
         
         // Assert the character was added correctly
-        Assert.Single(characters);
+        Assert.Single(items);
         
         // Add another character
         await SetupCharacter(GeorgesDanton);
         
         // Assert the cached single character is returned
-        Assert.Single(characters);
-        Assert.DoesNotContain(characters, c => c.Name == GeorgesDanton);
+        Assert.Single(items);
+        Assert.DoesNotContain(items, c => c.Name == GeorgesDanton);
     }
 }

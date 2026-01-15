@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using FrenchRevolution.Domain.Repositories;
 using FrenchRevolution.Infrastructure.Cache;
 using FrenchRevolution.Infrastructure.Data;
@@ -12,16 +11,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
-namespace FrenchRevolution.IntegrationTests;
+namespace FrenchRevolution.IntegrationTests.Characters;
 
 [Collection(nameof(DatabaseCollection))]
 public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
 {
-    private TestAppDbContext _dbContext = null!;
-    protected TestDataBuilder TestData = null!;
-
     protected ICacheAside CacheAside = null!;
     protected ICharacterRepository CharacterRepository = null!;
+    
+    private TestAppDbContext _dbContext = null!;
+    private TestDataBuilder _testData = null!;
     
     private IDistributedCache _distributedCache = null!;
     private IRoleRepository _roleRepository = null!;
@@ -59,17 +58,18 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
         CharacterRepository = new CharacterRepository(_dbContext);
         _roleRepository = new RoleRepository(_dbContext);
         _unitOfWork = new UnitOfWork(_dbContext);
-        TestData = new TestDataBuilder(_roleRepository, CharacterRepository, _unitOfWork);
+        _testData = new TestDataBuilder(_roleRepository, CharacterRepository, _unitOfWork);
     }
     
-    /// Builds and adds a character with the given name to the test db.
+    /// Builds and adds a character with the given name
+    /// and optional profession and role to the test db.
     protected async Task SetupCharacter(
         string name,
         string profession = Lawyer,
         string roleTitle = Deputy
         )
     {
-        TestData.CreateCharacter()
+        _testData.CreateCharacter()
             .WithName(name)
             .WithProfession(profession)
             .WithDates(From, To)
@@ -78,7 +78,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
                 To)
             .Build();
 
-        await TestData.SaveAsync();
+        await _testData.SaveAsync();
     }
 
     public async Task DisposeAsync()

@@ -9,10 +9,24 @@ namespace FrenchRevolution.Application.Controllers;
 public class CharacterController(ISender sender) : BaseApiController
 {
     [HttpGet] 
-    public async Task<ActionResult<List<CharacterResponseDto>>> GetAll()
+    public async Task<ActionResult<PagedList<CharacterResponseDto>>> GetAll(
+        [FromQuery] string? name,
+        [FromQuery] string? sortColumn,
+        [FromQuery] string? sortOrder,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20
+        )
     {
-        var characters = await sender.Send(new GetAllCharactersQuery());
-        return Ok(characters.Select(c => c).ToList());
+        var characters = await sender.Send(
+            new GetAllCharactersQuery(
+                name, 
+                sortColumn, 
+                sortOrder,
+                page,
+                pageSize)
+            );
+        
+        return Ok(characters);
     }
     
     [HttpGet("{id:guid}")]

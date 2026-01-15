@@ -1,12 +1,34 @@
 namespace FrenchRevolution.Contracts.Models;
 
-public class PagedResult<T>
+public class PagedList<T>
 {
-    public IReadOnlyList<T> Items { get; init; } = [];
-    public int Page { get; init; }
-    public int PageSize { get; init; }
-    public long TotalCount { get; init; }
-    public int TotalPages => PageSize == 0
-        ? 0
-        : (int)Math.Ceiling(TotalCount / (double)PageSize);
+    private PagedList(IReadOnlyList<T> items, int page, int pageSize, int totalCount)
+    {
+        Items = items;
+        Page = page;
+        PageSize = pageSize;
+        TotalCount = totalCount;
+    }
+    
+    public IReadOnlyList<T> Items { get; }
+    public int Page { get;}
+    public int PageSize { get;}
+    public long TotalCount { get; }
+    public bool HasNextPage => Page * PageSize < TotalCount;
+    public bool HasPreviousPage => Page > 1;
+ 
+    public static PagedList<T> CreatePagedListAsync(
+        IReadOnlyList<T> items, 
+        int page, 
+        int pageSize,
+        int totalCount
+        )
+    {
+        return new PagedList<T>(items, page, pageSize, totalCount);
+    }
+    
+    public static PagedList<T> EmptyPagedList()
+    {
+        return new PagedList<T>([], 1, 0, 0);
+    }
 }
