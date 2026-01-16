@@ -1,18 +1,30 @@
 using FrenchRevolution.Application.Characters.Queries;
-using FrenchRevolution.Domain.Entities;
+using FrenchRevolution.Contracts.Mapping;
+using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.Domain.Repositories;
+using FrenchRevolution.Infrastructure.Cache;
 using MediatR;
 
 namespace FrenchRevolution.Application.Characters.Handlers;
 
 public class GetCharacterByIdHandler(
+    ICacheAside cacheAside,
     ICharacterRepository repository
-) : IRequestHandler<GetCharacterByIdQuery, Character?>
+) : IRequestHandler<GetCharacterByIdQuery, CharacterResponseDto?>
 {
-    public async Task<Character?> Handle(
+    private const string Key = "characters:id"; 
+    
+    public async Task<CharacterResponseDto?> Handle(
             GetCharacterByIdQuery command,
-            CancellationToken cancellationToken)
+            CancellationToken ct)
     {
-        return await repository.GetByIdAsync(command.Id);
+        return await cacheAside.GetOrCreateAsync(
+            Key, 
+            async token => 
+            { 
+                var character = await repository.GetByIdAsync(command.Id, token);
+                return character?.ToResponseDto();
+            }, 
+            ct: ct);
     }
 }

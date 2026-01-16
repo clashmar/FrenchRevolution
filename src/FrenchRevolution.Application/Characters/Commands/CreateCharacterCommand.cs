@@ -4,4 +4,4 @@ using MediatR;
 
 namespace FrenchRevolution.Application.Characters.Commands;
 
-public record CreateCharacterCommand(CharacterRequestDto Character) : IRequest<Guid>;
+public record CreateCharacterCommand(CharacterRequestDto Request) : IRequest<Guid>;

@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Contracts"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.Application.UnitTests", "test\FrenchRevolution.Application.UnitTests\FrenchRevolution.Application.UnitTests.csproj", "{A2A729C4-00D5-4887-AEF7-043B6862B23D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FrenchRevolution.IntegrationTests", "test\FrenchRevolution.IntegrationTests\FrenchRevolution.IntegrationTests.csproj", "{64BF9077-D4CB-403A-A7E1-9E219EA189AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2A729C4-00D5-4887-AEF7-043B6862B23D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64BF9077-D4CB-403A-A7E1-9E219EA189AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64BF9077-D4CB-403A-A7E1-9E219EA189AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64BF9077-D4CB-403A-A7E1-9E219EA189AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64BF9077-D4CB-403A-A7E1-9E219EA189AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
