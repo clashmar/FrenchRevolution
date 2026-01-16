@@ -7,65 +7,65 @@ public sealed class Character : Entity
 { 
     public string Name { get; private set; }
     public string Profession { get; private set; }
-    public List<CharacterRole> CharacterRoles { get; private set; } = [];
-    public DateTime DateOfBirth { get; private set; }
-    public DateTime DateOfDeath { get; private set; }
+    public List<CharacterOffice> CharacterOffices { get; private set; } = [];
+    public DateTime Born { get; private set; }
+    public DateTime Died { get; private set; }
     
     
     public Character(
         string name, 
         string profession,
-        DateTime dateOfBirth,
-        DateTime dateOfDeath
+        DateTime born,
+        DateTime died
         ) : base(Guid.NewGuid())
     {
         ValidateRequiredProperty(name, nameof(name));
         ValidateRequiredProperty(profession, nameof(profession));
-        ValidateLifeSpan(dateOfBirth, dateOfDeath);
+        ValidateLifeSpan(born, died);
         
         Name = name;
         Profession = profession;
-        DateOfBirth = DateTime.SpecifyKind(dateOfBirth, DateTimeKind.Utc);
-        DateOfDeath = DateTime.SpecifyKind(dateOfDeath, DateTimeKind.Utc);
+        Born = DateTime.SpecifyKind(born, DateTimeKind.Utc);
+        Died = DateTime.SpecifyKind(died, DateTimeKind.Utc);
     }
 
     public void Update(
         string name, 
         string profession, 
-        DateTime dateOfBirth, 
-        DateTime dateOfDeath
+        DateTime born, 
+        DateTime died
         )
     {
         ValidateRequiredProperty(name, nameof(name));
         ValidateRequiredProperty(profession, nameof(profession));
-        ValidateLifeSpan(dateOfBirth, dateOfDeath);
+        ValidateLifeSpan(born, died);
         
         Name = name;
         Profession = profession;
-        DateOfBirth = DateTime.SpecifyKind(dateOfBirth, DateTimeKind.Utc);
-        DateOfDeath = DateTime.SpecifyKind(dateOfDeath, DateTimeKind.Utc);
+        Born = DateTime.SpecifyKind(born, DateTimeKind.Utc);
+        Died = DateTime.SpecifyKind(died, DateTimeKind.Utc);
     }
     
-    public void AssignRole(Role role, DateTime from, DateTime to)
+    public void AssignOffice(Office office, DateTime from, DateTime to)
     {
         if (from > to)
         {
             throw new InvalidTimeSpanException(from, to);
         }
 
-        var characterRole = new CharacterRole(Id, role.Id, from, to);
-        CharacterRoles.Add(characterRole);
+        var characterRole = new CharacterOffice(Id, office.Id, from, to);
+        CharacterOffices.Add(characterRole);
     }
 
-    public void ClearRoles()
+    public void ClearOffices()
     {
-        CharacterRoles.Clear();
+        CharacterOffices.Clear();
     }
 
-    public void UpdateRoles(IEnumerable<CharacterRole> newRoles)
+    public void UpdateOffices(IEnumerable<CharacterOffice> newOffices)
     {
-        CharacterRoles.Clear();
-        CharacterRoles.AddRange(newRoles);
+        CharacterOffices.Clear();
+        CharacterOffices.AddRange(newOffices);
     }
 
     private static void ValidateRequiredProperty(string value, string propertyName)
@@ -76,11 +76,11 @@ public sealed class Character : Entity
         }
     }
 
-    private static void ValidateLifeSpan(DateTime dateOfBirth, DateTime dateOfDeath)
+    private static void ValidateLifeSpan(DateTime born, DateTime died)
     {
-        if (dateOfBirth > dateOfDeath)
+        if (born > died)
         {
-            throw new InvalidLifeSpanException(dateOfBirth, dateOfDeath);
+            throw new InvalidLifeSpanException(born, died);
         }
     }
 }

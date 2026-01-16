@@ -43,11 +43,11 @@ public class GetAllCharactersHandlerTests(
         
         var robespierre = items.First(c => c.Name == MaximilienRobespierre);
         Assert.Equal(Lawyer, robespierre.Profession);
-        Assert.Equal(President, robespierre.Roles.First().Title);
+        Assert.Equal(President, robespierre.Offices.First().Title);
         
         var desmoulins = items.First(c => c.Name == CamilleDesmoulins);
         Assert.Equal(Journalist, desmoulins.Profession);
-        Assert.Equal(Deputy, desmoulins.Roles.First().Title);
+        Assert.Equal(Deputy, desmoulins.Offices.First().Title);
     }
     
     [Fact]

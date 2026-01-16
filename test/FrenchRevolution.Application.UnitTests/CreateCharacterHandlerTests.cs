@@ -10,13 +10,13 @@ namespace FrenchRevolution.Application.UnitTests;
 public class CreateCharacterHandlerTests  
 {
     private readonly Mock<ICharacterRepository> _mockCharacterRepository = new();
-    private readonly Mock<IRoleRepository> _mockRoleRepository = new();
+    private readonly Mock<IOfficeRepository> _mockOfficeRepository = new();
     private readonly Mock<IUnitOfWork> _mockUnitOfWork = new();
 
     private const string Name = "Maximilen Robespierre";
     private const string Profession = "Lawyer";
-    private readonly DateTime _dateOfBirth = new(1999, 01, 01);
-    private readonly DateTime _dateOfDeath = new(2000, 01, 01);
+    private readonly DateTime _born = new(1999, 01, 01);
+    private readonly DateTime _died = new(2000, 01, 01);
     
     [Fact]
     public async Task Handle_ReturnsSuccess_WhenCreated()
@@ -25,8 +25,8 @@ public class CreateCharacterHandlerTests
         var dto = new CharacterRequestDto(
             Name,
             Profession,
-            _dateOfBirth,
-            _dateOfDeath,
+            _born,
+            _died,
             []
         );
  
@@ -52,7 +52,7 @@ public class CreateCharacterHandlerTests
     {
         return new CreateCharacterHandler(
             _mockCharacterRepository.Object, 
-            _mockRoleRepository.Object,
+            _mockOfficeRepository.Object,
             _mockUnitOfWork.Object
         );
     }

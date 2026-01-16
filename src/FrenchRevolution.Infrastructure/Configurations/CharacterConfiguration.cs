@@ -21,19 +21,19 @@ internal class CharacterConfiguration : IEntityTypeConfiguration<Character>
             .IsRequired()
             .HasMaxLength(128);
         
-        builder.Property(c => c.DateOfBirth)
+        builder.Property(c => c.Born)
             .IsRequired()
             .HasConversion(
                 v => v,         
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
 
-        builder.Property(c => c.DateOfDeath)
+        builder.Property(c => c.Died)
             .IsRequired()
             .HasConversion(
                 v => v,
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         
-        builder.HasMany(c => c.CharacterRoles)
+        builder.HasMany(c => c.CharacterOffices)
             .WithOne(cr => cr.Character)
             .HasForeignKey(cr => cr.CharacterId)
             .OnDelete(DeleteBehavior.Cascade);

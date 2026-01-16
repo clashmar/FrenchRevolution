@@ -1,12 +1,12 @@
 namespace FrenchRevolution.Contracts.Models;
 
-public sealed record RoleRequestDto(
+public sealed record OfficeRequestDto(
     string Title, 
     DateTime From, 
     DateTime To
     );
     
-public sealed record RoleResponseDto(
+public sealed record OfficeResponseDto(
     string Title,
     DateTime From,
     DateTime To

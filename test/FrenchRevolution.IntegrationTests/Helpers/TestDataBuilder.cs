@@ -4,46 +4,46 @@ using FrenchRevolution.Domain.Repositories;
 namespace FrenchRevolution.IntegrationTests.Helpers;
 
 public class TestDataBuilder(
-    IRoleRepository roleRepository,
+    IOfficeRepository officeRepository,
     ICharacterRepository characterRepository,
     IUnitOfWork unitOfWork)
 {
-    public RoleBuilder CreateRole() => new(roleRepository);
+    public OfficeBuilder CreateOffice() => new(officeRepository);
     
-    public CharacterBuilder CreateCharacter() => new(characterRepository, roleRepository);
+    public CharacterBuilder CreateCharacter() => new(characterRepository, officeRepository);
 
     public async Task SaveAsync() => await unitOfWork.SaveChangesAsync();
 }
 
-public class RoleBuilder(IRoleRepository repository)
+public class OfficeBuilder(IOfficeRepository repository)
 {
-    private Role? _role;
+    private Office? _office;
 
-    public RoleBuilder WithTitle(string title)
+    public OfficeBuilder WithTitle(string title)
     {
-        _role = new Role(title);
+        _office = new Office(title);
         return this;
     }
 
-    public Role Build()
+    public Office Build()
     {
-        if (_role is null)
+        if (_office is null)
         {
-            throw new InvalidOperationException("Role not configured. Call WithTitle first.");
+            throw new InvalidOperationException("Office not configured. Call WithTitle first.");
         }
 
-        repository.Add(_role);
-        return _role;
+        repository.Add(_office);
+        return _office;
     }
 }
 
-public class CharacterBuilder(ICharacterRepository characterRepository, IRoleRepository roleRepository)
+public class CharacterBuilder(ICharacterRepository characterRepository, IOfficeRepository officeRepository)
 {
     private string _name = "Test Character";
     private string _profession = "Test Profession";
-    private DateTime _dateOfBirth = new(1750, 1, 1);
-    private DateTime _dateOfDeath = new(1800, 1, 1);
-    private readonly List<(string roleTitle, DateTime from, DateTime to)> _roles = [];
+    private DateTime _born = new(1750, 1, 1);
+    private DateTime _died = new(1800, 1, 1);
+    private readonly List<(string officeTitle, DateTime from, DateTime to)> _offices = [];
 
     public CharacterBuilder WithName(string name)
     {
@@ -57,33 +57,33 @@ public class CharacterBuilder(ICharacterRepository characterRepository, IRoleRep
         return this;
     }
 
-    public CharacterBuilder WithDates(DateTime dateOfBirth, DateTime dateOfDeath)
+    public CharacterBuilder WithDates(DateTime born, DateTime died)
     {
-        _dateOfBirth = dateOfBirth;
-        _dateOfDeath = dateOfDeath;
+        _born = born;
+        _died = died;
         return this;
     }
 
-    public CharacterBuilder WithRole(string roleTitle, DateTime from, DateTime to)
+    public CharacterBuilder WithOffice(string officeTitle, DateTime from, DateTime to)
     {
-        _roles.Add((roleTitle, from, to));
+        _offices.Add((officeTitle, from, to));
         return this;
     }
 
     public Character Build()
     {
-        var character = new Character(_name, _profession, _dateOfBirth, _dateOfDeath);
+        var character = new Character(_name, _profession, _born, _died);
 
-        foreach (var (roleTitle, from, to) in _roles)
+        foreach (var (officeTitle, from, to) in _offices)
         {
-            var role = roleRepository.GetByTitleAsync(roleTitle).GetAwaiter().GetResult();
-            if (role is null)
+            var office = officeRepository.GetByTitleAsync(officeTitle).GetAwaiter().GetResult();
+            if (office is null)
             {
-                role = new Role(roleTitle);
-                roleRepository.Add(role);
+                office = new Office(officeTitle);
+                officeRepository.Add(office);
             }
 
-            character.AssignRole(role, from, to);
+            character.AssignOffice(office, from, to);
         }
 
         characterRepository.Add(character);

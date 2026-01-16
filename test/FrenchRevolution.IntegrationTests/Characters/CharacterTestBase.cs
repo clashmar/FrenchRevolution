@@ -23,7 +23,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
     private TestDataBuilder _testData = null!;
     
     private IDistributedCache _distributedCache = null!;
-    private IRoleRepository _roleRepository = null!;
+    private IOfficeRepository _officeRepository = null!;
     private IUnitOfWork _unitOfWork = null!;
     
     // Character names
@@ -56,9 +56,9 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
         CacheAside = new CacheAside(_distributedCache, mockCacheLogger.Object);
         
         CharacterRepository = new CharacterRepository(_dbContext);
-        _roleRepository = new RoleRepository(_dbContext);
+        _officeRepository = new OfficeRepository(_dbContext);
         _unitOfWork = new UnitOfWork(_dbContext);
-        _testData = new TestDataBuilder(_roleRepository, CharacterRepository, _unitOfWork);
+        _testData = new TestDataBuilder(_officeRepository, CharacterRepository, _unitOfWork);
     }
     
     /// Builds and adds a character with the given name
@@ -73,7 +73,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
             .WithName(name)
             .WithProfession(profession)
             .WithDates(From, To)
-            .WithRole(roleTitle, 
+            .WithOffice(roleTitle, 
                 From, 
                 To)
             .Build();

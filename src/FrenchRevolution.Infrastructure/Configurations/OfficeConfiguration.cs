@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FrenchRevolution.Infrastructure.Configurations;
 
-internal class RoleConfiguration : IEntityTypeConfiguration<Role>
+internal class OfficeConfiguration : IEntityTypeConfiguration<Office>
 {
-    public void Configure(EntityTypeBuilder<Role> builder)
+    public void Configure(EntityTypeBuilder<Office> builder)
     {
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Id).ValueGeneratedNever();

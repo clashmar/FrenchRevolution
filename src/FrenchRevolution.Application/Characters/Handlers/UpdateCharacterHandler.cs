@@ -8,7 +8,7 @@ namespace FrenchRevolution.Application.Characters.Handlers;
 public class UpdateCharacterHandler(
     ICharacterRepository characterRepository,
     IUnitOfWork unitOfWork,
-    IRoleRepository roleRepository
+    IOfficeRepository officeRepository
 ) : IRequestHandler<UpdateCharacterCommand, bool>
 {
     public async Task<bool> Handle(
@@ -26,25 +26,25 @@ public class UpdateCharacterHandler(
         character.Update(
             command.Request.Name,
             command.Request.Profession,
-            command.Request.DateOfBirth,
-            command.Request.DateOfDeath
+            command.Request.Born,
+            command.Request.Died
         );
         
         // Clear existing roles
-        character.ClearRoles();
+        character.ClearOffices();
         
         // Assign new roles
-        foreach (var roleDto in command.Request.Roles)
+        foreach (var roleDto in command.Request.Offices)
         {
-            var role = await roleRepository.GetByTitleAsync(roleDto.Title, ct);
+            var role = await officeRepository.GetByTitleAsync(roleDto.Title, ct);
 
             if (role is null)
             {
-                role = new Role(roleDto.Title);
-                roleRepository.Add(role);
+                role = new Office(roleDto.Title);
+                officeRepository.Add(role);
             }
 
-            character.AssignRole(role, roleDto.From, roleDto.To);
+            character.AssignOffice(role, roleDto.From, roleDto.To);
         }
         
         characterRepository.Update(character);

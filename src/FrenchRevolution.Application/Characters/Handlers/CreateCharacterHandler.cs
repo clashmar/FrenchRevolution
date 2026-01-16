@@ -7,7 +7,7 @@ namespace FrenchRevolution.Application.Characters.Handlers;
 
 internal sealed class CreateCharacterHandler(
     ICharacterRepository characterRepository,
-    IRoleRepository roleRepository,
+    IOfficeRepository officeRepository,
     IUnitOfWork unitOfWork
     ) : IRequestHandler<CreateCharacterCommand, Guid>
 {
@@ -17,17 +17,17 @@ internal sealed class CreateCharacterHandler(
     {
         Character character = command.Request;
         
-        foreach (var roleDto in command.Request.Roles)
+        foreach (var roleDto in command.Request.Offices)
         {
-            var role = await roleRepository.GetByTitleAsync(roleDto.Title, ct);
+            var role = await officeRepository.GetByTitleAsync(roleDto.Title, ct);
 
             if (role is null)
             {
-                role = new Role(roleDto.Title);
-                roleRepository.Add(role);
+                role = new Office(roleDto.Title);
+                officeRepository.Add(role);
             }
 
-            character.AssignRole(role, roleDto.From, roleDto.To);
+            character.AssignOffice(role, roleDto.From, roleDto.To);
         }
         
         var characterId = characterRepository.Add(character);

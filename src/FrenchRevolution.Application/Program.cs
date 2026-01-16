@@ -1,3 +1,4 @@
+using System.Text;
 using System.Threading.RateLimiting;
 using FluentValidation;
 using FrenchRevolution.Application.Constants;
@@ -6,10 +7,13 @@ using FrenchRevolution.Application.Validation;
 using FrenchRevolution.Domain.Repositories;
 using FrenchRevolution.Infrastructure.Cache;
 using FrenchRevolution.Infrastructure.Data;
-using FrenchRevolution.Infrastructure.Repositories;
+using FrenchRevolution.Infrastructure.Repositories; 
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args); 
@@ -73,6 +77,40 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     );
 });
 
+// Identity
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Lockout.MaxFailedAccessAttempts = 5;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequiredLength = 8;
+        options.Password.RequireNonAlphanumeric = false;
+        options.User.RequireUniqueEmail = true;
+    })
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddSignInManager();
+
+// Jwt Authentication
+builder.Services
+    .AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters.ValidIssuer = builder.Configuration["Jwt:Issuer"];
+        options.TokenValidationParameters.ValidAudience = builder.Configuration["Jwt:Audience"];
+        options.TokenValidationParameters.IssuerSigningKey = 
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)
+        );
+    });
+
+builder.Services.AddAuthorization();
+
 // MediatR
 builder.Services.AddMediatR(cfg =>
 {
@@ -101,7 +139,7 @@ builder.Services.AddHealthChecks()
 // Services
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
-builder.Services.AddScoped<IRoleRepository, RoleRepository>();
+builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
@@ -111,6 +149,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
+
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.Migrate();
+    
+    await SeedIdentity.SeedAsync(scope.ServiceProvider, builder.Configuration);
 }
 
 app.UseExceptionHandler();
@@ -120,6 +164,8 @@ app.MapHealthChecks("/healthz");
 app.UseHttpsRedirection();
 
 app.MapControllers().RequireRateLimiting(RateLimiting.FixedWindow);
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

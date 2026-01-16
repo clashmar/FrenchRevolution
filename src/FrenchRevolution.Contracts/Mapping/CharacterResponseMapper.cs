@@ -11,11 +11,11 @@ public static class CharacterResponseMapper
             character.Id,
             character.Name,
             character.Profession,
-            character.DateOfBirth,
-            character.DateOfDeath,
-            character.CharacterRoles
-                .Select(cr => new RoleResponseDto(
-                    cr.Role.Title,
+            character.Born,
+            character.Died,
+            character.CharacterOffices
+                .Select(cr => new OfficeResponseDto(
+                    cr.Office.Title,
                     cr.From,
                     cr.To))
                 .ToList()

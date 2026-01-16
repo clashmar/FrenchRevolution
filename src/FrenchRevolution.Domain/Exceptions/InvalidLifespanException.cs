@@ -1,10 +1,10 @@
 namespace FrenchRevolution.Domain.Exceptions;
 
-public sealed class InvalidLifeSpanException(DateTime dateOfBirth, DateTime dateOfDeath)
+public sealed class InvalidLifeSpanException(DateTime born, DateTime died)
     : DomainException(
-        $"Date of death ({dateOfDeath:yyyy‑MM‑dd}) cannot be earlier than date of birth ({dateOfBirth:yyyy‑MM‑dd})."
+        $"Date of death ({died:yyyy‑MM‑dd}) cannot be earlier than date of birth ({born:yyyy‑MM‑dd})."
         )
 {
-    public DateTime DateOfBirth { get; } = dateOfBirth;
-    public DateTime DateOfDeath { get; } = dateOfDeath;
+    public DateTime Born { get; } = born;
+    public DateTime Died { get; } = died;
 }

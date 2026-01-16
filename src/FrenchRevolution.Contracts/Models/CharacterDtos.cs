@@ -6,19 +6,19 @@ public sealed record CharacterResponseDto(
     Guid Id,
     string Name,
     string Profession,
-    DateTime DateOfBirth,
-    DateTime DateOfDeath,
-    IReadOnlyCollection<RoleResponseDto> Roles
+    DateTime Born,
+    DateTime Died,
+    IReadOnlyCollection<OfficeResponseDto> Offices
 );
 
 public sealed record CharacterRequestDto(
     string Name,
     string Profession,
-    DateTime DateOfBirth,
-    DateTime DateOfDeath,
-    IReadOnlyCollection<RoleRequestDto> Roles
+    DateTime Born,
+    DateTime Died,
+    IReadOnlyCollection<OfficeRequestDto> Offices
     )
 {
     public static implicit operator Character(CharacterRequestDto r) =>
-        new(r.Name, r.Profession, r.DateOfBirth, r.DateOfDeath);
+        new(r.Name, r.Profession, r.Born, r.Died);
 }

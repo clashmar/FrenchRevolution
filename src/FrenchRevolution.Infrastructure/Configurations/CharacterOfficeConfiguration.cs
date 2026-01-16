@@ -4,21 +4,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FrenchRevolution.Infrastructure.Configurations;
 
-internal class CharacterRoleConfiguration : IEntityTypeConfiguration<CharacterRole>
+internal class CharacterOfficeConfiguration : IEntityTypeConfiguration<CharacterOffice>
 {
-    public void Configure(EntityTypeBuilder<CharacterRole> builder)
+    public void Configure(EntityTypeBuilder<CharacterOffice> builder)
     {
         builder.HasKey(cr => cr.Id);
         builder.Property(cr => cr.Id).ValueGeneratedNever();
 
         builder.HasOne(cr => cr.Character)
-            .WithMany(c => c.CharacterRoles)
+            .WithMany(c => c.CharacterOffices)
             .HasForeignKey(cr => cr.CharacterId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(cr => cr.Role)
-            .WithMany(r => r.CharacterRoles)
-            .HasForeignKey(cr => cr.RoleId)
+        builder.HasOne(cr => cr.Office)
+            .WithMany(r => r.CharacterOffices)
+            .HasForeignKey(cr => cr.OfficeId)
             .OnDelete(DeleteBehavior.Cascade);
         
         builder.Property(cr => cr.From)

@@ -21,8 +21,8 @@ public class CharacterRepository(
         )
     {
         var query = context.Characters
-            .Include(c => c.CharacterRoles)
-            .ThenInclude(rc => rc.Role)
+            .Include(c => c.CharacterOffices)
+            .ThenInclude(rc => rc.Office)
             .AsQueryable(); 
 
         if (!string.IsNullOrWhiteSpace(nameFilter))
@@ -49,8 +49,8 @@ public class CharacterRepository(
     public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct  = default) 
     {
         return await context.Characters
-            .Include(c => c.CharacterRoles)
-            .ThenInclude(cr => cr.Role)
+            .Include(c => c.CharacterOffices)
+            .ThenInclude(cr => cr.Office)
             .FirstOrDefaultAsync(c => c.Id == id, ct);
     }
 
@@ -74,8 +74,8 @@ public class CharacterRepository(
     {
         return sortColumn?.ToLower() switch
         {
-            QueryValues.Born => c => c.DateOfBirth,
-            QueryValues.Died => c => c.DateOfDeath,
+            QueryValues.Born => c => c.Born,
+            QueryValues.Died => c => c.Died,
             _ => c => c.Name
         };
     }

@@ -5,7 +5,7 @@ namespace FrenchRevolution.Infrastructure.Data;
 
 internal static class SeedData
 {
-    private static Role[] CreateRoles() =>
+    private static Office[] CreateOffices() =>
     [
         new("President of the Committee of Public Safety"), // 0
         new("Member of the Committee of Public Safety"), // 1
@@ -14,7 +14,7 @@ internal static class SeedData
         new("Minister of Justice") // 4
     ];
 
-    private static Character[] CreateCharacters(Role[] roles)
+    private static Character[] CreateCharacters(Office[] offices)
     {
         var robespierre = new Character(
             "Maximilien Robespierre",
@@ -22,8 +22,8 @@ internal static class SeedData
             new DateTime(1758, 5, 6),
             new DateTime(1794, 7, 28));
         
-        robespierre.AssignRole(roles[2], new DateTime(1793, 8, 22), new DateTime(1793, 9, 7));
-        robespierre.AssignRole(roles[0], new DateTime(1793, 6, 4), new DateTime(1794, 6, 19));
+        robespierre.AssignOffice(offices[2], new DateTime(1793, 8, 22), new DateTime(1793, 9, 7));
+        robespierre.AssignOffice(offices[0], new DateTime(1793, 6, 4), new DateTime(1794, 6, 19));
 
         var danton = new Character(
             "Georges Jacques Danton",
@@ -31,8 +31,8 @@ internal static class SeedData
             new DateTime(1759, 10, 26),
             new DateTime(1794, 4, 5));
         
-        danton.AssignRole(roles[1], new DateTime(1793, 4, 6), new DateTime(1793, 7, 10));
-        danton.AssignRole(roles[4], new DateTime(1792, 8, 10), new DateTime(1792, 10, 9));
+        danton.AssignOffice(offices[1], new DateTime(1793, 4, 6), new DateTime(1793, 7, 10));
+        danton.AssignOffice(offices[4], new DateTime(1792, 8, 10), new DateTime(1792, 10, 9));
 
         var desmoulins = new Character(
             "Camille Desmoulins",
@@ -40,7 +40,7 @@ internal static class SeedData
             new DateTime(1760, 3, 2),
             new DateTime(1794, 4, 5));
         
-        desmoulins.AssignRole(roles[3], new DateTime(1792, 9, 20), new DateTime(1794, 4, 5));
+        desmoulins.AssignOffice(offices[3], new DateTime(1792, 9, 20), new DateTime(1794, 4, 5));
 
         return [
             robespierre, 
@@ -51,15 +51,15 @@ internal static class SeedData
 
     public static void SeedStaticData(AppDbContext context)
     {
-        if (context.Roles.Any() || context.Characters.Any())
+        if (context.Offices.Any() || context.Characters.Any())
         {
             return;
         }
 
-        var roles = CreateRoles();
-        context.Roles.AddRange(roles);
+        var offices = CreateOffices();
+        context.Offices.AddRange(offices);
         
-        var characters = CreateCharacters(roles);
+        var characters = CreateCharacters(offices);
         context.Characters.AddRange(characters);
     }
 
@@ -67,15 +67,15 @@ internal static class SeedData
         AppDbContext context,
         CancellationToken ct = default)
     {
-        if (await context.Roles.AnyAsync(ct) || await context.Characters.AnyAsync(ct))
+        if (await context.Offices.AnyAsync(ct) || await context.Characters.AnyAsync(ct))
         {
             return;
         }
 
-        var roles = CreateRoles();
-        await context.Roles.AddRangeAsync(roles, ct);
+        var offices = CreateOffices();
+        await context.Offices.AddRangeAsync(offices, ct);
         
-        var characters = CreateCharacters(roles);
+        var characters = CreateCharacters(offices);
         await context.Characters.AddRangeAsync(characters, ct);
     }
 }

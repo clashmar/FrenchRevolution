@@ -3,18 +3,18 @@ using FrenchRevolution.Domain.Primitives;
 
 namespace FrenchRevolution.Domain.Data;
 
-public sealed class CharacterRole : Entity
+public sealed class CharacterOffice : Entity
 {
     public Guid CharacterId { get; private set; } 
-    public Guid RoleId { get; private set; }
+    public Guid OfficeId { get; private set; }
     public Character Character { get; private set; } = null!;
-    public Role Role { get; private set; } = null!;
+    public Office Office { get; private set; } = null!;
     public DateTime From { get; private set; }
     public DateTime To { get; private set; }
     
-    public CharacterRole(
+    public CharacterOffice(
         Guid characterId, 
-        Guid roleId,
+        Guid officeId,
         DateTime from,
         DateTime to
         ) : base(Guid.NewGuid())
@@ -25,10 +25,10 @@ public sealed class CharacterRole : Entity
         }
         
         CharacterId = characterId;
-        RoleId = roleId;
+        OfficeId = officeId;
         From = DateTime.SpecifyKind(from, DateTimeKind.Utc);
         To = DateTime.SpecifyKind(to, DateTimeKind.Utc);
     }
     
-    private CharacterRole() : base(Guid.Empty) { }
+    private CharacterOffice() : base(Guid.Empty) { }
 }

@@ -5,19 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FrenchRevolution.Infrastructure.Repositories;
 
-public class RoleRepository(AppDbContext context) : IRoleRepository
+public class OfficeRepository(AppDbContext context) : IOfficeRepository
 {
-    public async Task<Role?> GetByTitleAsync(string title,  CancellationToken ct = default)
+    public async Task<Office?> GetByTitleAsync(string title,  CancellationToken ct = default)
     {
         var normalizedTitle = title.Trim().ToLowerInvariant();
-        return await context.Roles.FirstOrDefaultAsync(
+        return await context.Offices.FirstOrDefaultAsync(
             r => r.NormalizedTitle == normalizedTitle, 
             ct);
     }
 
-    public Guid Add(Role role)
+    public Guid Add(Office office)
     {
-        context.Roles.Add(role);
-        return role.Id;
+        context.Offices.Add(office);
+        return office.Id;
     }
 }

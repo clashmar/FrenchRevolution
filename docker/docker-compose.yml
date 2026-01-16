@@ -52,6 +52,12 @@ services:
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=local_db;Username=${DB_USER};Password=${DB_PASSWORD}
       - ConnectionStrings__Redis=redis:6379
       - Mediator__LicenseKey={MEDIATOR_LICENSE}
+      - Admin__Email=${ADMIN_EMAIL}            
+      - Admin__Password=${ADMIN_PASSWORD}
+      - Jwt__Issuer=http://localhost:5050
+      - Jwt__Audience=http://localhost:5050
+      - Jwt__ExpirationInMinutes=2
+      - Jwt__SecretKey=${JWT_SECRET}
     ports:
       - "5050:5050"
     depends_on:

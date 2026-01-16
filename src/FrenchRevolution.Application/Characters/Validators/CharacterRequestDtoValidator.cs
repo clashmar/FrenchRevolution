@@ -19,22 +19,22 @@ public class CharacterRequestDtoValidator : AbstractValidator<CharacterRequestDt
             .MinimumLength(4).WithMessage("Profession must be at least 3 characters long.");
         
         // Date of birth
-        RuleFor(x => x.DateOfBirth)
+        RuleFor(x => x.Born)
             .NotEmpty().WithMessage("Date of birth is required.")
             .Must(BeInPast).WithMessage("Date of birth must be in the past.")
-            .LessThan(x => x.DateOfDeath).WithMessage("Date of birth must be before date of death.");
+            .LessThan(x => x.Died).WithMessage("Date of birth must be before date of death.");
         
         // Date of death
-        RuleFor(x => x.DateOfDeath)
+        RuleFor(x => x.Died)
             .NotEmpty().WithMessage("Date of death is required.")
             .Must(BeInPast).WithMessage("Date of death must be in the past.")
-            .GreaterThan(x => x.DateOfBirth).WithMessage("Date of death must be after date of birth.");
+            .GreaterThan(x => x.Born).WithMessage("Date of death must be after date of birth.");
 
         // Roles
-        RuleFor(x => x.Roles)
-            .Must(roles => roles
+        RuleFor(x => x.Offices)
+            .Must(offices => offices
                 .All(r => BeInPast(r.From) && BeInPast(r.To)))
-                .WithMessage("All role dates must be in the past.");
+                .WithMessage("All office dates must be in the past.");
     }
 
     private static bool BeInPast(DateTime date)
