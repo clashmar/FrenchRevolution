@@ -1,6 +1,8 @@
 using System.Text;
 using System.Threading.RateLimiting;
 using FluentValidation;
+using FrenchRevolution.Application.Auth.Services;
+using FrenchRevolution.Application.Config;
 using FrenchRevolution.Application.Constants;
 using FrenchRevolution.Application.Exceptions;
 using FrenchRevolution.Application.Validation;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
@@ -94,6 +97,8 @@ builder.Services.AddIdentityCore<ApplicationUser>(options =>
     .AddSignInManager();
 
 // Jwt Authentication
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(JwtOptions.SectionName));
+
 builder.Services
     .AddAuthentication(options =>
         {
@@ -102,16 +107,19 @@ builder.Services
         })
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters.ValidIssuer = builder.Configuration["Jwt:Issuer"];
-        options.TokenValidationParameters.ValidAudience = builder.Configuration["Jwt:Audience"];
-        options.TokenValidationParameters.IssuerSigningKey = 
-            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)
-        );
+        var jwtConfig = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>();
+        
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = jwtConfig?.Issuer,
+            ValidAudience =  jwtConfig?.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig?.SecretKey!)),
+        };
     });
 
 builder.Services.AddAuthorization();
 
-// MediatR
+// Mediator
 builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssemblyContaining<Program>();
@@ -141,6 +149,7 @@ builder.Services.AddSingleton<ICacheAside, CacheAside>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 

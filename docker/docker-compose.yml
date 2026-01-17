@@ -56,7 +56,7 @@ services:
       - Admin__Password=${ADMIN_PASSWORD}
       - Jwt__Issuer=http://localhost:5050
       - Jwt__Audience=http://localhost:5050
-      - Jwt__ExpirationInMinutes=2
+      - Jwt__ExpireInMinutes=2
       - Jwt__SecretKey=${JWT_SECRET}
     ports:
       - "5050:5050"

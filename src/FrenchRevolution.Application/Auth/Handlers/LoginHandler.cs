@@ -2,10 +2,13 @@ using System.Security.Claims;
 using System.Text;
 using FrenchRevolution.Application.Abstractions;
 using FrenchRevolution.Application.Auth.Commands;
+using FrenchRevolution.Application.Auth.Services;
+using FrenchRevolution.Application.Config;
 using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
@@ -15,8 +18,7 @@ namespace FrenchRevolution.Application.Auth.Handlers;
 internal sealed class LoginHandler(
     SignInManager<ApplicationUser> signInManager,
     UserManager<ApplicationUser> userManager,
-    // TODO: Switch to options pattern
-    IConfiguration configuration
+    ITokenService tokenService
 ) : IRequestHandler<LoginCommand, Result<LoginResponseDto>>
 {
     public async Task<Result<LoginResponseDto>> Handle(
@@ -44,33 +46,8 @@ internal sealed class LoginHandler(
         
         var roles = await userManager.GetRolesAsync(user);
 
-        var signingKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
+        var token = tokenService.CreateTokenForUser(user, roles);
         
-        var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
-
-        List<Claim> claims =
-        [
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email!),
-            ..roles.Select(r => new Claim(ClaimTypes.Role, r))
-        ];
-
-        var expires = DateTime.UtcNow.AddMinutes(configuration.GetValue<int>("Jwt:ExpireInMinutes"));
-
-        var tokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(claims),
-            Expires = expires,
-            SigningCredentials = credentials,
-            Issuer = configuration["Jwt:Issuer"],
-            Audience = configuration["Jwt:Audience"],
-            IssuedAt = DateTime.UtcNow,
-        };
-
-        var tokenHandler = new JsonWebTokenHandler();
-        var token = tokenHandler.CreateToken(tokenDescriptor);
-        
-        return Result<LoginResponseDto>.Success(new LoginResponseDto(token, expires));
+        return Result<LoginResponseDto>.Success(new LoginResponseDto(token));
     }
 }
