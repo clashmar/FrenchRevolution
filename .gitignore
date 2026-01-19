@@ -51,6 +51,7 @@ _ReSharper.Caches/
 
 # Docker
 **/.env
+**/.containers
 
 # OS / Misc
 .DS_Store

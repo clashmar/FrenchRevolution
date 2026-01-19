@@ -2,12 +2,12 @@ using System.Text;
 using System.Threading.RateLimiting;
 using FluentValidation;
 using FrenchRevolution.Application.Auth.Services;
+using FrenchRevolution.Application.Behaviours;
 using FrenchRevolution.Application.Config;
 using FrenchRevolution.Application.Constants;
 using FrenchRevolution.Application.Exceptions;
-using FrenchRevolution.Application.Validation;
 using FrenchRevolution.Domain.Repositories;
-using FrenchRevolution.Infrastructure.Cache;
+using FrenchRevolution.Infrastructure.Cache; 
 using FrenchRevolution.Infrastructure.Data;
 using FrenchRevolution.Infrastructure.Repositories; 
 using MediatR;
@@ -16,7 +16,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args); 
 
@@ -77,7 +82,7 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        builder.Configuration.GetConnectionString("Database"),
         sqlOptions => sqlOptions.MigrationsAssembly("FrenchRevolution.Infrastructure")
     );
 });
@@ -131,20 +136,42 @@ builder.Services.AddMediatR(cfg =>
 // Redis
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = builder.Configuration.GetConnectionString("Cache");
     options.InstanceName = "FrenchRevolution";
 });
 
 // Health checks
 builder.Services.AddHealthChecks()
     .AddNpgSql(
-        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        builder.Configuration.GetConnectionString("Database")!,
         name: "database",
         tags: ["db", "sql", "postgres"])
     .AddRedis(
-        builder.Configuration.GetConnectionString("Redis")!,
+        builder.Configuration.GetConnectionString("Cache")!,
         name: "redis-cache",
         tags: ["cache", "redis"]);
+
+// Logging
+builder.Host.UseSerilog((context, configuration) 
+    => configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
+
+// Open Telemetry
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("FrenchRevolution"))
+    .WithMetrics(metrics =>
+    {
+        metrics.AddAspNetCoreInstrumentation();
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddRedisInstrumentation();
+    });
 
 // Services
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
@@ -161,12 +188,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 
+    // TODO: extract to extension method
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
     
     await SeedIdentity.SeedAsync(scope.ServiceProvider, builder.Configuration);
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 

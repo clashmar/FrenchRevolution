@@ -51,10 +51,10 @@ public class GetAllCharactersHandler(
 
     private static string ConstructCacheKey(GetAllCharactersQuery query)
     {
-        var namekey = (query.Name ?? QueryValues.All).Trim().ToLowerInvariant();
+        var nameKey = (query.Name ?? QueryValues.All).Trim().ToLowerInvariant();
         var colKey = (query.SortColumn ?? QueryValues.Name).Trim().ToLowerInvariant();
         var orderKey = (query.SortOrder ?? QueryValues.Asc).Trim().ToLowerInvariant();
 
-        return $"{BaseKey}:{namekey}:{colKey}:{orderKey}:{query.Page}:{query.PageSize}";
+        return $"{BaseKey}:{nameKey}:{colKey}:{orderKey}:{query.Page}:{query.PageSize}";
     }
 }
