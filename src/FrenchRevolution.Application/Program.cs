@@ -15,7 +15,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 
@@ -32,7 +31,7 @@ builder.Services
                 Status = StatusCodes.Status400BadRequest,
             });
     });
-
+ 
 // Problem details
 builder.Services.AddProblemDetails(cfg =>
 { 
@@ -44,7 +43,10 @@ builder.Services.AddProblemDetails(cfg =>
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.Logging.AddConsole();
 
