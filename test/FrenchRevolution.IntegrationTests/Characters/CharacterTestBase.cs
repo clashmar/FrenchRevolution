@@ -41,13 +41,13 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
     protected const string Deputy = "Deputy of the National Convention";
 
     // Dates
-    protected readonly DateTime From = new(1791, 5, 6);
-    protected readonly DateTime To = new(1794, 5, 6);
+    protected static readonly DateTime From = new(1791, 5, 6);
+    protected static readonly DateTime To = new(1794, 5, 6);
 
     public async Task InitializeAsync()
     {
         await databaseFixture.ResetDatabaseAsync();
-        _dbContext = await databaseFixture.CreateDbContextAsync();
+        _dbContext = databaseFixture.CreateDbContext();
         
         var memoryCacheOptions = Options.Create(new MemoryDistributedCacheOptions());
         _distributedCache = new MemoryDistributedCache(memoryCacheOptions);
@@ -78,6 +78,24 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
                 To)
             .Build();
 
+        await _testData.SaveAsync();
+    }
+    
+    /// Batch setup for multiple characters
+    protected async Task SetupCharacters(
+        params (string Name, string Profession, string RoleTitle)[] characters
+        )
+    {
+        foreach (var (name, profession, roleTitle) in characters)
+        {
+            _testData.CreateCharacter()
+                .WithName(name)
+                .WithProfession(profession)
+                .WithDates(From, To)
+                .WithOffice(roleTitle, From, To)
+                .Build();
+        }
+        
         await _testData.SaveAsync();
     }
 

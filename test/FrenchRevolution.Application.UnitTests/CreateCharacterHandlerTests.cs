@@ -18,10 +18,14 @@ public class CreateCharacterHandlerTests
     private readonly DateTime _born = new(1999, 01, 01);
     private readonly DateTime _died = new(2000, 01, 01);
     
+    private readonly Guid _guid = Guid.NewGuid();
+    
     [Fact]
-    public async Task Handle_ReturnsSuccess_WhenCreated()
+    public async Task Handle_ReturnsGuid_WhenCreated()
     {
         // Arrange
+        SetupDefaultMocks();
+        
         var dto = new CharacterRequestDto(
             Name,
             Profession,
@@ -37,7 +41,7 @@ public class CreateCharacterHandlerTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        Assert.NotEqual(Guid.Empty, result);
+        Assert.Equal(_guid, result);
         
         _mockCharacterRepository.Verify(
             m => m.Add(It.IsAny<Character>()),
@@ -55,5 +59,11 @@ public class CreateCharacterHandlerTests
             _mockOfficeRepository.Object,
             _mockUnitOfWork.Object
         );
+    }
+
+    private void SetupDefaultMocks()
+    {
+        _mockCharacterRepository.Setup(m => m.Add(It.IsAny<Character>()))
+            .Returns(_guid);
     }
 }

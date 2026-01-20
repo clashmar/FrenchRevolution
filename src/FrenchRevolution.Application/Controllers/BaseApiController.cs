@@ -1,9 +1,9 @@
-using MediatR;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.RateLimiting;
 
 namespace FrenchRevolution.Application.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion(1)]
+[Route("api/v{version:apiVersion}/[controller]")]
 public abstract class BaseApiController : ControllerBase;

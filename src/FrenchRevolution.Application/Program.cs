@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.RateLimiting;
+using Asp.Versioning;
 using FluentValidation;
 using FrenchRevolution.Application.Auth.Services;
 using FrenchRevolution.Application.Behaviours;
@@ -16,7 +17,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -172,6 +172,21 @@ builder.Services.AddOpenTelemetry()
             .AddEntityFrameworkCoreInstrumentation()
             .AddRedisInstrumentation();
     });
+
+// Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddMvc()
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 // Services
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
