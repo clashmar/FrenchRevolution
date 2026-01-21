@@ -53,6 +53,10 @@ _ReSharper.Caches/
 **/.env
 **/.containers
 
+# k8s
+**/*secrets.yaml
+**/*secret.yaml
+
 # OS / Misc
 .DS_Store
 Thumbs.db

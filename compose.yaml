@@ -9,8 +9,8 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5000
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://dashboard:18889
-      - ConnectionStrings__DefaultConnection=Host=database;Port=5432;Database=local_db;Username=${DB_USER};Password=${DB_PASSWORD}
-      - ConnectionStrings__Redis=cache:6379
+      - ConnectionStrings__Database=Host=database;Port=5432;Database=local_db;Username=${DB_USER};Password=${DB_PASSWORD}
+      - ConnectionStrings__Cache=cache:6379
       - Mediator__LicenseKey={MEDIATOR_LICENSE}
       - Admin__Email=${ADMIN_EMAIL}
       - Admin__Password=${ADMIN_PASSWORD}

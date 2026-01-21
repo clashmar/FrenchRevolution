@@ -1,0 +1,92 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: application
+          image: clashmarr/frenchrevolution:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "5000"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://dashboard:18889
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_NAME       
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            - name: ConnectionStrings__Database
+              value: "Host=db-service;Port=5432;Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD)"
+            - name: ConnectionStrings__Cache
+              value: "cache:6379"
+            - name: Mediator__LicenseKey
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: MEDIATOR_LICENSE
+            - name: Admin__Email
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: ADMIN_EMAIL
+            - name: Admin__Password
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: ADMIN_PASSWORD
+            - name: Jwt__Issuer
+              value: "http://localhost:5000"
+            - name: Jwt__Audience
+              value: "http://localhost:5000"
+            - name: Jwt__ExpireInMinutes
+              value: "2"
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5000         
+      targetPort: 5000   
+      nodePort: 30050
+  selector:
+    app: api
+
+
+
+      

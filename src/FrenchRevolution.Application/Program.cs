@@ -25,6 +25,13 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args); 
 
+// Logging
+builder.Host.UseSerilog((context, configuration) 
+    => configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
+
+// Controllers
 builder.Services
     .AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -150,12 +157,6 @@ builder.Services.AddHealthChecks()
         builder.Configuration.GetConnectionString("Cache")!,
         name: "redis-cache",
         tags: ["cache", "redis"]);
-
-// Logging
-builder.Host.UseSerilog((context, configuration) 
-    => configuration.ReadFrom.Configuration(context.Configuration));
-
-builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
 
 // Open Telemetry
 builder.Services.AddOpenTelemetry()
