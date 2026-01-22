@@ -31,7 +31,3 @@ spec:
       targetPort: 18888
   selector:
     app: dashboard
-
-
-
-      

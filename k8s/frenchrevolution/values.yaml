@@ -1,0 +1,64 @@
+api:
+  replicaCount: 1
+  image:
+    repository: clashmarr/frenchrevolution
+    tag: dev
+    pullPolicy: Always
+  service:
+    type: NodePort
+    port: 5000
+    targetPort: 5000
+    nodePort: 30050
+  config:
+    ASPNETCORE_ENVIRONMENT: "Development"
+    ASPNETCORE_HTTP_PORTS: "5000"
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://api-dashboard:18889"
+    Jwt__Issuer: "http://localhost:5000"
+    Jwt__Audience: "http://localhost:5000"
+    Jwt__ExpireInMinutes: "2"
+    DB_HOST: "db"
+    DB_PORT: "5432"
+    ConnectionStrings__Cache: "cache-master:6379"
+
+postgresql:
+  enabled: true
+  fullnameOverride: db
+  auth:
+    username: user
+    password: password
+    database: local_db
+  primary:
+    service:
+      port: 5432
+      targetPort: 5432
+    persistence:
+      enabled: false
+
+redis:
+  enabled: true
+  fullnameOverride: cache
+  auth: 
+    enabled: false
+  master:
+    service:
+      port: 6379
+      targetPort: 6379
+  
+dashboard:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: mcr.microsoft.com/dotnet/aspire-dashboard
+    tag: "13"
+    pullPolicy: IfNotPresent
+  service: 
+    type: NodePort
+    port: 18888         
+    targetPort: 18888
+    nodePort: 30060
+  otlp:
+    service:
+      port: 18889
+      targetPort: 18889
+  
+  

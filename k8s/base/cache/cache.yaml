@@ -31,7 +31,3 @@ spec:
       targetPort: 6379
   selector:
     app: cache
-
-
-
-      

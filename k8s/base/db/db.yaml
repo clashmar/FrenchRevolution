@@ -1,4 +1,5 @@
-﻿apiVersion: apps/v1
+﻿# db.yaml
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: db-deployment
@@ -47,7 +48,3 @@ spec:
       targetPort: 5432
   selector:
     app: db
-
-
-
-      

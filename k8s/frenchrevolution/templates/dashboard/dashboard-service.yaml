@@ -1,0 +1,24 @@
+﻿{{- if .Values.dashboard.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "frenchrevolution.fullname" . }}-dashboard
+  labels:
+    {{- include "frenchrevolution.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.dashboard.service.type }}
+  ports:
+    - name: otlp
+      port: {{ .Values.dashboard.otlp.service.port }}        
+      targetPort: {{ .Values.dashboard.otlp.service.targetPort }}
+      protocol: TCP
+      appProtocol: grpc
+    - name: ui
+      port: {{ .Values.dashboard.service.port }}                   
+      targetPort: {{ .Values.dashboard.service.targetPort }}
+      nodePort: {{ .Values.dashboard.service.nodePort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "frenchrevolution.name" . }}-dashboard
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- end }}

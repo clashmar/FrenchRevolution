@@ -3,4 +3,3 @@ kind: ConfigMap
 metadata:
   name: dashboard-config
 data:
-  db-url: dashboard-service

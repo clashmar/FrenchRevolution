@@ -1,5 +1,5 @@
 ﻿services:
-  application:
+  api:
     image: application
     build:
       context: .
@@ -9,7 +9,7 @@
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=5000
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://dashboard:18889
-      - ConnectionStrings__Database=Host=database;Port=5432;Database=local_db;Username=${DB_USER};Password=${DB_PASSWORD}
+      - ConnectionStrings__Database=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
       - ConnectionStrings__Cache=cache:6379
       - Mediator__LicenseKey={MEDIATOR_LICENSE}
       - Admin__Email=${ADMIN_EMAIL}
@@ -27,15 +27,15 @@
     depends_on:
       cache:
         condition: service_healthy
-      database:
+      db-service:
         condition: service_healthy
       dashboard: 
         condition: service_started
     restart: unless-stopped
  
-  database:
+  db-service:
     image: postgres:15
-    container_name: database
+    container_name: db
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -51,16 +51,16 @@
       timeout: 5s
       retries: 5
       
-  dbadmin:
+  db-admin:
     image: dpage/pgadmin4:9
-    container_name: dbadmin
+    container_name: db-admin
     environment:
       - PGADMIN_DEFAULT_EMAIL=${ADMIN_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${ADMIN_PASSWORD}
     ports:
       - "8080:80"
     depends_on:
-      - database
+      - db-service
     volumes:
       - ./.containers/pgadmin-data:/var/lib/pgadmin
         

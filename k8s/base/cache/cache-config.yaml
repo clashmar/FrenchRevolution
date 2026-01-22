@@ -3,4 +3,3 @@ kind: ConfigMap
 metadata:
   name: cache-config
 data:
-  db-url: cache-service
