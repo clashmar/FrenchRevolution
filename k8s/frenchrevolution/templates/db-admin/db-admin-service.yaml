@@ -1,0 +1,20 @@
+﻿{{- if .Values.dbadmin.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "frenchrevolution.fullname" . }}-dbadmin
+  labels:
+    {{- include "frenchrevolution.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.dbadmin.service.type }}
+  ports:
+    - name: dbadmin
+      port: {{ .Values.dbadmin.service.port }}
+      targetPort: {{ .Values.dbadmin.service.targetPort }}
+      {{- if eq .Values.dbadmin.service.type "NodePort" }}
+      nodePort: {{ .Values.dbadmin.service.nodePort }}
+      {{- end }}
+  selector:
+    app.kubernetes.io/name: {{ include "frenchrevolution.name" . }}-dbadmin
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- end }}

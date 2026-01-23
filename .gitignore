@@ -70,3 +70,6 @@ Icon?
 *.bak
 *.swp
 *~
+
+# This is just a secrets template
+!k8s/frenchrevolution/templates/api/api-secret.yaml

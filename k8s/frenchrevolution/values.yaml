@@ -23,10 +23,6 @@ api:
 postgresql:
   enabled: true
   fullnameOverride: db
-  auth:
-    username: user
-    password: password
-    database: local_db
   primary:
     service:
       port: 5432
@@ -60,5 +56,18 @@ dashboard:
     service:
       port: 18889
       targetPort: 18889
+      
+dbadmin:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: dpage/pgadmin4
+    tag: "9"
+    pullPolicy: IfNotPresent
+  service:
+    type: NodePort
+    port: 80
+    targetPort: 80
+    nodePort: 30070
   
   

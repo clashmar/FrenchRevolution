@@ -30,18 +30,18 @@ spec:
           - name: DB_NAME
             valueFrom:
               secretKeyRef:
-                name: db-secret
-                key: database
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbName
           - name: DB_USER
             valueFrom:
               secretKeyRef:
-                name: db-secret
-                key: username
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbUser
           - name: DB_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: db-secret
-                key: password
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbPassword
           - name: Mediator__LicenseKey
             valueFrom:
               secretKeyRef:
@@ -64,3 +64,7 @@ spec:
                 key: jwtSecret
           - name: ConnectionStrings__Database
             value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD)"
+      initContainers:
+        - name: init-db
+          image: busybox:1.36
+          command: ["sh", "-c", "until nc -z db 5432; do echo Waiting for database...; sleep 2; done; echo Database port is open!"]
