@@ -1,3 +1,19 @@
+ingress:
+  enabled: true
+  className: "nginx" 
+  api:
+    host: "api.french-revolution.local"
+    path: /
+    pathType: Prefix
+  dashboard:
+    host: "dashboard.french-revolution.local"
+    path: /
+    pathType: Prefix
+  dbadmin:
+    host: "db-admin.french-revolution.local"
+    path: /
+    pathType: Prefix
+
 api:
   replicaCount: 1
   image:
@@ -5,10 +21,8 @@ api:
     tag: dev
     pullPolicy: Always
   service:
-    type: NodePort
     port: 5000
     targetPort: 5000
-    nodePort: 30050
   config:
     ASPNETCORE_ENVIRONMENT: "Development"
     ASPNETCORE_HTTP_PORTS: "5000"
@@ -48,10 +62,8 @@ dashboard:
     tag: "13"
     pullPolicy: IfNotPresent
   service: 
-    type: NodePort
     port: 18888         
     targetPort: 18888
-    nodePort: 30060
   otlp:
     service:
       port: 18889
@@ -65,9 +77,7 @@ dbadmin:
     tag: "9"
     pullPolicy: IfNotPresent
   service:
-    type: NodePort
     port: 80
     targetPort: 80
-    nodePort: 30070
   
   

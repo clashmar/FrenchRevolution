@@ -90,7 +90,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("Database"),
-        sqlOptions => sqlOptions.MigrationsAssembly("FrenchRevolution.Infrastructure")
+        optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(AppDbContext).Assembly)
     );
 });
 

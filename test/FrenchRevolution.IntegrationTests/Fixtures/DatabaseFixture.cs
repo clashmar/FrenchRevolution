@@ -1,5 +1,4 @@
 using FrenchRevolution.Infrastructure.Data;
-using FrenchRevolution.IntegrationTests.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Respawn;
@@ -15,8 +14,8 @@ public class DatabaseFixture : IAsyncLifetime
             .WithDatabase("french_revolution_test")
             .WithUsername("test")
             .WithPassword("test")
-            .WithCleanUp(false)
-            .WithReuse(true)
+            .WithCleanUp(true)
+            .WithReuse(false)
             .Build();
 
     private string ConnectionString => _container.GetConnectionString();
@@ -27,6 +26,7 @@ public class DatabaseFixture : IAsyncLifetime
     {
         await _container.StartAsync();
         await using var context = CreateDbContext();
+
         await context.Database.MigrateAsync();
         
         await using var connection = new NpgsqlConnection(ConnectionString);
@@ -45,14 +45,17 @@ public class DatabaseFixture : IAsyncLifetime
         await _container.DisposeAsync();
     }
     
-    public TestAppDbContext CreateDbContext()
+    public AppDbContext CreateDbContext()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
-            .EnableSensitiveDataLogging(false)
-            .UseNpgsql(ConnectionString)
+            .EnableSensitiveDataLogging(false)     
+            .UseNpgsql(
+                ConnectionString,
+                optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(AppDbContext).Assembly)
+            )
             .Options;
-
-        var context = new TestAppDbContext(options);
+        
+        var context = new AppDbContext(options);
         return context;
     }
 

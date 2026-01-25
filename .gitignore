@@ -40,7 +40,6 @@ _ReSharper.Caches/
 *.secrets.json
 
 ## EF Core Migrations
-**/Migrations/*.Designer.cs
 **/Migrations/*.csproj
 
 ## Test results

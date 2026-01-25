@@ -4,7 +4,6 @@ using FrenchRevolution.Infrastructure.Data;
 using FrenchRevolution.Infrastructure.Repositories;
 using FrenchRevolution.IntegrationTests.Fixtures;
 using FrenchRevolution.IntegrationTests.Helpers;
-using FrenchRevolution.IntegrationTests.Infrastructure;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
     protected ICacheAside CacheAside = null!;
     protected ICharacterRepository CharacterRepository = null!;
     
-    private TestAppDbContext _dbContext = null!;
+    private AppDbContext _dbContext = null!;
     private TestDataBuilder _testData = null!;
     
     private IDistributedCache _distributedCache = null!;

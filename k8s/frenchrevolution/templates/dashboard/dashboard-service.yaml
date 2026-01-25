@@ -16,7 +16,6 @@ spec:
     - name: ui
       port: {{ .Values.dashboard.service.port }}                   
       targetPort: {{ .Values.dashboard.service.targetPort }}
-      nodePort: {{ .Values.dashboard.service.nodePort }}
       protocol: TCP
   selector:
     app.kubernetes.io/name: {{ include "frenchrevolution.name" . }}-dashboard
