@@ -1,7 +1,9 @@
 using FrenchRevolution.Application.Characters.Commands;
 using FrenchRevolution.Application.Characters.Queries;
 using FrenchRevolution.Contracts.Models;
+using FrenchRevolution.Infrastructure.Data;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrenchRevolution.Application.Controllers;
@@ -9,6 +11,7 @@ namespace FrenchRevolution.Application.Controllers;
 public class CharacterController(ISender sender) : BaseApiController
 {
     [HttpGet] 
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Member}")]
     public async Task<ActionResult<PagedList<CharacterResponseDto>>> GetAll(
         [FromQuery] string? name,
         [FromQuery] string? sortColumn,
@@ -30,6 +33,7 @@ public class CharacterController(ISender sender) : BaseApiController
     }
     
     [HttpGet("{id:guid}")]
+    [Authorize(Roles = $"{Roles.Admin},{Roles.Member}")]
     public async Task<ActionResult<CharacterResponseDto>> GetById(Guid id)
     {
         var character = await sender.Send(new GetCharacterByIdQuery(id));
@@ -40,6 +44,7 @@ public class CharacterController(ISender sender) : BaseApiController
     }
 
     [HttpPost]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Guid>> Create(CharacterRequestDto request)
     {
         var guid = await sender.Send(new CreateCharacterCommand(request));
@@ -50,6 +55,7 @@ public class CharacterController(ISender sender) : BaseApiController
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<CharacterResponseDto>> Update(Guid id, CharacterRequestDto request)
     {
         var updated = await sender.Send(new UpdateCharacterCommand(id, request));
@@ -59,6 +65,7 @@ public class CharacterController(ISender sender) : BaseApiController
     }
 
     [HttpDelete("{id:guid}")] 
+    [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> Delete(Guid id)
     {
         var deleted = await sender.Send(new DeleteCharacterCommand(id));

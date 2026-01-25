@@ -1,0 +1,78 @@
+﻿# api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-deployment
+  labels:
+    app: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api
+  template:
+    metadata:
+      labels:
+        app: api
+    spec:
+      containers:
+        - name: application
+          image: clashmarr/frenchrevolution:dev
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: api-config
+          env:
+            - name: DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_NAME 
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: DB_PASSWORD
+            - name: ConnectionStrings__Database
+              value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD)"
+            - name: Mediator__LicenseKey
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: MEDIATOR_LICENSE
+            - name: Admin__Email
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: ADMIN_EMAIL
+            - name: Admin__Password
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: ADMIN_PASSWORD
+            - name: Jwt__SecretKey
+              valueFrom:
+                secretKeyRef:
+                  name: api-secret
+                  key: JWT_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: api-service
+spec:
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5000         
+      targetPort: 5000   
+      nodePort: 30050
+  selector:
+    app: api

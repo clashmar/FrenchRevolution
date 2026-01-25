@@ -1,0 +1,21 @@
+apiVersion: v2
+name: frenchrevolution
+description: A Helm chart for the French Revolution API
+type: application
+version: 0.1.0
+appVersion: "dev"
+
+dependencies:
+  - name: postgresql
+    version: 18.2.3
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql.enabled
+    tags:
+      - database
+
+  - name: redis
+    version: 24.1.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: redis.enabled
+    tags:
+      - cache

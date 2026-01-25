@@ -1,6 +1,4 @@
-@FrenchRevolution.Application_HostAddress = http://localhost:5185
+@HostAddress = http://localhost:5185/
 
-GET {{FrenchRevolution.Application_HostAddress}}/weatherforecast/
+GET {{HostAddress}}/Character/
 Accept: application/json
-
-###

@@ -1,0 +1,47 @@
+﻿{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "frenchrevolution.fullname" . }}-ingress
+  labels:
+    {{- include "frenchrevolution.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
+  rules:
+    - host: {{ .Values.ingress.api.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.api.path }}
+            pathType: {{ .Values.ingress.api.pathType }}
+            backend:
+              service:
+                name: {{ include "frenchrevolution.fullname" . }}-service
+                port:
+                  number: {{ .Values.api.service.port }}
+    - host: {{ .Values.ingress.dashboard.host }}
+      http:
+        paths:                 
+          - path: {{ .Values.ingress.dashboard.path }}
+            pathType: {{ .Values.ingress.dashboard.pathType }}
+            backend:
+              service:
+                name: {{ include "frenchrevolution.fullname" . }}-dashboard
+                port:
+                  number: {{ .Values.dashboard.service.port }}
+    - host: {{ .Values.ingress.dbadmin.host }}
+      http:
+        paths:
+          - path: {{ .Values.ingress.dbadmin.path }}
+            pathType: {{ .Values.ingress.dbadmin.pathType }}
+            backend:
+              service:
+                name: {{ include "frenchrevolution.fullname" . }}-dbadmin
+                port:
+                  number: {{ .Values.dbadmin.service.port }}
+  {{- end }}

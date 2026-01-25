@@ -1,6 +1,12 @@
 namespace FrenchRevolution.Application.Abstractions;
 
-public readonly struct Result<T>
+public interface IResultType
+{
+    bool IsFailure { get; }
+    string? Error { get; }
+}
+
+public readonly struct Result<T> : IResultType
 {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
@@ -15,11 +21,10 @@ public readonly struct Result<T>
         Error = error;
     }
 
-    public static Result<T> Success(T value) =>
-        new Result<T>(true, value, null);
+    public static Result<T> Success(T value) => new(true, value, null);
 
-    public static Result<T> Failure(string? error = "An error occurred.") =>
-        new Result<T>(false, default, error ?? "An error occurred.");
+    public static Result<T> Failure(string? error = "An error occurred") =>
+        new(false, default, error ?? "An error occurred");
 
     public static implicit operator Result<T>(T value) => Success(value);
 }

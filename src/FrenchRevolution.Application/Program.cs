@@ -1,13 +1,14 @@
 using System.Text;
 using System.Threading.RateLimiting;
+using Asp.Versioning;
 using FluentValidation;
 using FrenchRevolution.Application.Auth.Services;
+using FrenchRevolution.Application.Behaviours;
 using FrenchRevolution.Application.Config;
 using FrenchRevolution.Application.Constants;
 using FrenchRevolution.Application.Exceptions;
-using FrenchRevolution.Application.Validation;
 using FrenchRevolution.Domain.Repositories;
-using FrenchRevolution.Infrastructure.Cache;
+using FrenchRevolution.Infrastructure.Cache; 
 using FrenchRevolution.Infrastructure.Data;
 using FrenchRevolution.Infrastructure.Repositories; 
 using MediatR;
@@ -15,12 +16,22 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Scalar.AspNetCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args); 
 
+// Logging
+builder.Host.UseSerilog((context, configuration) 
+    => configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehaviour<,>));
+
+// Controllers
 builder.Services
     .AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -32,7 +43,7 @@ builder.Services
                 Status = StatusCodes.Status400BadRequest,
             });
     });
-
+ 
 // Problem details
 builder.Services.AddProblemDetails(cfg =>
 { 
@@ -44,7 +55,10 @@ builder.Services.AddProblemDetails(cfg =>
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 
 builder.Logging.AddConsole();
 
@@ -75,8 +89,8 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBeh
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        sqlOptions => sqlOptions.MigrationsAssembly("FrenchRevolution.Infrastructure")
+        builder.Configuration.GetConnectionString("Database"),
+        optionsBuilder => optionsBuilder.MigrationsAssembly(typeof(AppDbContext).Assembly)
     );
 });
 
@@ -129,20 +143,51 @@ builder.Services.AddMediatR(cfg =>
 // Redis
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.Configuration = builder.Configuration.GetConnectionString("Cache");
     options.InstanceName = "FrenchRevolution";
 });
 
 // Health checks
 builder.Services.AddHealthChecks()
     .AddNpgSql(
-        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        builder.Configuration.GetConnectionString("Database")!,
         name: "database",
         tags: ["db", "sql", "postgres"])
     .AddRedis(
-        builder.Configuration.GetConnectionString("Redis")!,
+        builder.Configuration.GetConnectionString("Cache")!,
         name: "redis-cache",
         tags: ["cache", "redis"]);
+
+// Open Telemetry
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService("FrenchRevolution"))
+    .WithMetrics(metrics =>
+    {
+        metrics.AddAspNetCoreInstrumentation();
+        metrics.AddOtlpExporter();
+    })
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddEntityFrameworkCoreInstrumentation()
+            .AddRedisInstrumentation();
+    });
+
+// Versioning
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new UrlSegmentApiVersionReader();
+})
+.AddMvc()
+.AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 // Services
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
@@ -159,12 +204,15 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
     app.MapScalarApiReference();
 
+    // TODO: extract to extension method
     using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
     
     await SeedIdentity.SeedAsync(scope.ServiceProvider, builder.Configuration);
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 

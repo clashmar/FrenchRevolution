@@ -1,0 +1,70 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "frenchrevolution.fullname" . }}-deployment
+  labels:
+    {{- include "frenchrevolution.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  replicas: {{ .Values.api.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "frenchrevolution.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: api
+  template:
+    metadata:
+      labels:
+        {{- include "frenchrevolution.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: api
+    spec:
+      containers:
+        - name: application
+          image: "{{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}"
+          imagePullPolicy: {{ .Values.api.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.api.service.targetPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "frenchrevolution.fullname" . }}-config
+          env:
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbName
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbUser
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: dbPassword
+          - name: Mediator__LicenseKey
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: mediatorLicense
+          - name: Admin__Email
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: adminEmail
+          - name: Admin__Password
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: adminPassword
+          - name: Jwt__SecretKey
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "frenchrevolution.fullname" . }}-secret
+                key: jwtSecret
+          - name: ConnectionStrings__Database
+            value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD)"
+      initContainers:
+        - name: init-db
+          image: busybox:1.36
+          command: ["sh", "-c", "until nc -z db 5432; do echo Waiting for database...; sleep 2; done; echo Database port is open!"]

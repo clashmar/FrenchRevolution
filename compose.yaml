@@ -1,0 +1,88 @@
+﻿services:
+  api:
+    image: application
+    build:
+      context: .
+      dockerfile: src/FrenchRevolution.Application/Dockerfile
+    container_name: api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=5000
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://dashboard:18889
+      - ConnectionStrings__Database=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - ConnectionStrings__Cache=cache:6379
+      - Mediator__LicenseKey={MEDIATOR_LICENSE}
+      - Admin__Email=${ADMIN_EMAIL}
+      - Admin__Password=${ADMIN_PASSWORD}
+      - Jwt__Issuer=http://localhost:5000
+      - Jwt__Audience=http://localhost:5000
+      - Jwt__ExpireInMinutes=2
+      - Jwt__SecretKey=${JWT_SECRET}
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    networks:
+      - default
+      - otel
+    depends_on:
+      cache:
+        condition: service_healthy
+      db-service:
+        condition: service_healthy
+      dashboard: 
+        condition: service_started
+    restart: unless-stopped
+ 
+  db-service:
+    image: postgres:15
+    container_name: db
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./.containers/pgdata:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      
+  db-admin:
+    image: dpage/pgadmin4:9
+    container_name: db-admin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${ADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${ADMIN_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db-service
+    volumes:
+      - ./.containers/pgadmin-data:/var/lib/pgadmin
+        
+  cache:
+    image: redis:7-alpine
+    container_name: cache
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "PING" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    
+  dashboard:
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:13
+    container_name: dashboard
+    ports:
+      - "18888:18888"
+    networks:
+      - otel
+
+networks:
+  otel:

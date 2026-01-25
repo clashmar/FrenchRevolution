@@ -1,0 +1,71 @@
+﻿name: Test & Report
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "*" ]
+jobs:
+  test-and-report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore Dependencies
+        run: dotnet restore FrenchRevolutionApi.sln
+
+      - name: Run Tests and Collect Coverage
+        run: |
+          dotnet test FrenchRevolutionApi.sln \
+            --logger "console;verbosity=detailed" \
+            --logger "trx;LogFileName=test-results.trx" \
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults
+        continue-on-error: true
+
+      - name: Upload Test Results Artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: test-results
+          path: '**/test-results.trx'
+
+      - name: Generate Test Report Summary
+        uses: dorny/test-reporter@v2
+        if: ${{ always() }}
+        with:
+          artifact: test-results
+          name: .NET Tests
+          path: '**/*.trx'
+          reporter: dotnet-trx
+          list-suites: all
+          list-tests: all
+          use-actions-summary: true
+          badge-title: 'Test Status'
+          max-annotations: 50
+
+      - name: Generate Coverage Report
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
+        if: ${{ always() }}
+        with:
+          reports: '**/coverage.cobertura.xml'
+          targetdir: 'CoverageReport'
+          reporttypes: 'MarkdownSummaryGithub'
+          toolpath: 'reportgeneratortool'
+
+      - name: Output Coverage Report
+        if: ${{ always() }}
+        run: |
+          echo "## Coverage Report" >> $GITHUB_STEP_SUMMARY
+          cat CoverageReport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: CoverageReport
+          path: CoverageReport

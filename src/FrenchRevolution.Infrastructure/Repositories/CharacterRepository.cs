@@ -21,6 +21,7 @@ public class CharacterRepository(
         )
     {
         var query = context.Characters
+            .AsNoTracking()
             .Include(c => c.CharacterOffices)
             .ThenInclude(rc => rc.Office)
             .AsQueryable(); 
@@ -49,6 +50,7 @@ public class CharacterRepository(
     public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct  = default) 
     {
         return await context.Characters
+            .AsNoTracking()
             .Include(c => c.CharacterOffices)
             .ThenInclude(cr => cr.Office)
             .FirstOrDefaultAsync(c => c.Id == id, ct);

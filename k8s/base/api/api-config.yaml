@@ -1,0 +1,15 @@
+﻿# api-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-config
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_HTTP_PORTS: "5000"
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://dashboard:18889
+  ConnectionStrings__Cache: cache:6379
+  Jwt__Issuer: http://localhost:5000
+  Jwt__Audience: http://localhost:5000
+  Jwt__ExpireInMinutes: "2"
+  DB_HOST: db-service
+  DB_PORT: "5432"

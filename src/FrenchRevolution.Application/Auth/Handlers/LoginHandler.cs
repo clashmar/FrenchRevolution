@@ -26,6 +26,7 @@ internal sealed class LoginHandler(
         CancellationToken ct)
     {
         var request = command.Request;
+        
         var user = await userManager.FindByEmailAsync(request.Email);
 
         if (user is null)

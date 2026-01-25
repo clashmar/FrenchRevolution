@@ -28,8 +28,10 @@ public class GetAllCharactersHandlerTests(
     public async Task Handle_ReturnsAllCharacters_WhenCharactersExist()
     {
         // Arrange
-        await SetupCharacter(MaximilienRobespierre, Lawyer, President);
-        await SetupCharacter(CamilleDesmoulins, Journalist, Deputy);
+        await SetupCharacters(
+            (MaximilienRobespierre, Lawyer, President),
+            (CamilleDesmoulins, Journalist, Deputy)
+        );
 
         var handler = new GetAllCharactersHandler(CacheAside, CharacterRepository);
         var query = new GetAllCharactersQuery();

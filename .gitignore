@@ -40,7 +40,6 @@ _ReSharper.Caches/
 *.secrets.json
 
 ## EF Core Migrations
-**/Migrations/*.Designer.cs
 **/Migrations/*.csproj
 
 ## Test results
@@ -51,6 +50,12 @@ _ReSharper.Caches/
 
 # Docker
 **/.env
+**/.containers
+
+# k8s
+**/*secrets.yaml
+**/*secret.yaml
+**/*secrets/
 
 # OS / Misc
 .DS_Store
@@ -64,3 +69,6 @@ Icon?
 *.bak
 *.swp
 *~
+
+# This is just a secrets template
+!k8s/frenchrevolution/templates/api/api-secret.yaml
