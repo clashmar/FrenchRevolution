@@ -1,6 +1,5 @@
 using FluentValidation;
 using FrenchRevolution.Contracts.Models;
-using FrenchRevolution.Infrastructure.Configurations;
 
 namespace FrenchRevolution.Application.Characters.Validators;
 
@@ -30,11 +29,25 @@ public class CharacterRequestDtoValidator : AbstractValidator<CharacterRequestDt
             .Must(BeInPast).WithMessage("Date of death must be in the past.")
             .GreaterThan(x => x.Born).WithMessage("Date of death must be after date of birth.");
 
-        // Roles
+        // Offices
         RuleFor(x => x.Offices)
             .Must(offices => offices
                 .All(r => BeInPast(r.From) && BeInPast(r.To)))
                 .WithMessage("All office dates must be in the past.");
+        
+        // Portrait
+        RuleFor(x => x.PortraitUrl)
+            .NotNull().NotEmpty().WithMessage("Portrait Url is required.")
+            .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute))
+            .WithMessage("Portrait Url must be a valid Url.");
+
+        // Factions
+        RuleForEach(x => x.Factions)
+            .ChildRules(faction =>
+            {
+                faction.RuleFor(f => f.Title)
+                    .NotNull().NotEmpty().WithMessage("Faction title is required.");
+            });
     }
 
     private static bool BeInPast(DateTime date)

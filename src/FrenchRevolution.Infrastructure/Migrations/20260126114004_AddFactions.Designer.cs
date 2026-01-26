@@ -3,6 +3,7 @@ using System;
 using FrenchRevolution.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FrenchRevolution.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260126114004_AddFactions")]
+    partial class AddFactions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,11 +50,6 @@ namespace FrenchRevolution.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("NormalizedName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("Profession")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -64,9 +62,6 @@ namespace FrenchRevolution.Infrastructure.Migrations
                         .HasColumnName("xmin");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique();
 
                     b.ToTable("Characters");
                 });

@@ -3,6 +3,7 @@ using System;
 using FrenchRevolution.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FrenchRevolution.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260125212654_AddPortrait")]
+    partial class AddPortrait
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,11 +50,6 @@ namespace FrenchRevolution.Infrastructure.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
-                    b.Property<string>("NormalizedName")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
                     b.Property<string>("Profession")
                         .IsRequired()
                         .HasMaxLength(128)
@@ -65,39 +63,7 @@ namespace FrenchRevolution.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("NormalizedName")
-                        .IsUnique();
-
                     b.ToTable("Characters");
-                });
-
-            modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterFaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CharacterId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("FactionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
-
-                    b.HasIndex("FactionId");
-
-                    b.ToTable("CharacterFactions");
                 });
 
             modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterOffice", b =>
@@ -133,43 +99,6 @@ namespace FrenchRevolution.Infrastructure.Migrations
                     b.HasIndex("OfficeId");
 
                     b.ToTable("CharacterOffices");
-                });
-
-            modelBuilder.Entity("FrenchRevolution.Domain.Data.Faction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("NormalizedTitle")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedTitle")
-                        .IsUnique();
-
-                    b.ToTable("Factions");
                 });
 
             modelBuilder.Entity("FrenchRevolution.Domain.Data.Office", b =>
@@ -434,25 +363,6 @@ namespace FrenchRevolution.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterFaction", b =>
-                {
-                    b.HasOne("FrenchRevolution.Domain.Data.Character", "Character")
-                        .WithMany("CharacterFactions")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FrenchRevolution.Domain.Data.Faction", "Faction")
-                        .WithMany("CharacterFactions")
-                        .HasForeignKey("FactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
-
-                    b.Navigation("Faction");
-                });
-
             modelBuilder.Entity("FrenchRevolution.Domain.Data.CharacterOffice", b =>
                 {
                     b.HasOne("FrenchRevolution.Domain.Data.Character", "Character")
@@ -525,14 +435,7 @@ namespace FrenchRevolution.Infrastructure.Migrations
 
             modelBuilder.Entity("FrenchRevolution.Domain.Data.Character", b =>
                 {
-                    b.Navigation("CharacterFactions");
-
                     b.Navigation("CharacterOffices");
-                });
-
-            modelBuilder.Entity("FrenchRevolution.Domain.Data.Faction", b =>
-                {
-                    b.Navigation("CharacterFactions");
                 });
 
             modelBuilder.Entity("FrenchRevolution.Domain.Data.Office", b =>

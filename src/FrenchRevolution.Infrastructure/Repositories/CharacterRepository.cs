@@ -24,6 +24,9 @@ public class CharacterRepository(
             .AsNoTracking()
             .Include(c => c.CharacterOffices)
             .ThenInclude(rc => rc.Office)
+            .Include(c => c.CharacterFactions)
+            .ThenInclude(cf => cf.Faction)
+            .AsSplitQuery()
             .AsQueryable(); 
 
         if (!string.IsNullOrWhiteSpace(nameFilter))
@@ -47,13 +50,24 @@ public class CharacterRepository(
         return (items, totalCount);
     }
 
-    public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct  = default) 
+    public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct  = default)
     {
         return await context.Characters
             .AsNoTracking()
             .Include(c => c.CharacterOffices)
             .ThenInclude(cr => cr.Office)
+            .Include(c => c.CharacterFactions)
+            .ThenInclude(cf => cf.Faction)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(c => c.Id == id, ct);
+    }
+
+    public async Task<Character?> GetByNameAsync(string name, CancellationToken ct = default)
+    {
+        var normalizedName = name.Trim().ToLowerInvariant();
+        return await context.Characters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(c => c.NormalizedName == normalizedName, ct);
     }
 
     public Guid Add(Character character)

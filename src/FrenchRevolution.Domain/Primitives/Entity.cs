@@ -1,8 +1,10 @@
 namespace FrenchRevolution.Domain.Primitives;
 
-public abstract class Entity(Guid id) : IEquatable<Entity>, ISoftDeletable
+public abstract class Entity : IEquatable<Entity>, ISoftDeletable
 {
-    public Guid Id { get; private init; } = id;
+    protected Entity() { }
+    protected Entity(Guid id) => Id = id;
+    public Guid Id { get; private init; }
     public bool IsDeleted { get; set; }
     
     public DateTime CreatedAt { get; init; } = DateTime.UtcNow;

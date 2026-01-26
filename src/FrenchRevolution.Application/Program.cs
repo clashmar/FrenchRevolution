@@ -193,6 +193,7 @@ builder.Services.AddApiVersioning(options =>
 builder.Services.AddSingleton<ICacheAside, CacheAside>();
 builder.Services.AddScoped<ICharacterRepository, CharacterRepository>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepository>();
+builder.Services.AddScoped<IFactionRepository, FactionRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 

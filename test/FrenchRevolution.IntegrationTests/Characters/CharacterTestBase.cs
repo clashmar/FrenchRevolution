@@ -23,6 +23,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
     
     private IDistributedCache _distributedCache = null!;
     private IOfficeRepository _officeRepository = null!;
+    private IFactionRepository _factionRepository = null!;
     private IUnitOfWork _unitOfWork = null!;
     
     // Character names
@@ -56,8 +57,9 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
         
         CharacterRepository = new CharacterRepository(_dbContext);
         _officeRepository = new OfficeRepository(_dbContext);
+        _factionRepository = new FactionRepository(_dbContext);
         _unitOfWork = new UnitOfWork(_dbContext);
-        _testData = new TestDataBuilder(_officeRepository, CharacterRepository, _unitOfWork);
+        _testData = new TestDataBuilder(_officeRepository, CharacterRepository, _factionRepository, _unitOfWork);
     }
     
     /// Builds and adds a character with the given name

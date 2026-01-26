@@ -14,7 +14,8 @@ public interface ICacheAside
         );
 }
 
-public sealed class CacheAside(
+public sealed class 
+    CacheAside(
     IDistributedCache cache,
     ILogger<CacheAside> logger
     ) : ICacheAside
