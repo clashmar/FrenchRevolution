@@ -3,7 +3,8 @@ using FrenchRevolution.Contracts.Models;
 
 namespace FrenchRevolution.Application.Characters.Validators;
 
-public class CharacterRequestDtoValidator : AbstractValidator<CharacterRequestDto>
+internal sealed class CharacterRequestDtoValidator 
+    : AbstractValidator<CharacterRequestDto>
 {
     public CharacterRequestDtoValidator()
     {
