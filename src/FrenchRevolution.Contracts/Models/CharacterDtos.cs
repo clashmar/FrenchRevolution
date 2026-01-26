@@ -1,4 +1,5 @@
 using FrenchRevolution.Domain.Data;
+using FrenchRevolution.Domain.Primitives;
 
 namespace FrenchRevolution.Contracts.Models;
 
@@ -8,7 +9,9 @@ public sealed record CharacterResponseDto(
     string Profession,
     DateTime Born,
     DateTime Died,
-    IReadOnlyCollection<OfficeResponseDto> Offices
+    string PortraitUrl,
+    IReadOnlyCollection<OfficeResponseDto> Offices,
+    IReadOnlyCollection<FactionSummaryDto> Factions
 );
 
 public sealed record CharacterRequestDto(
@@ -16,9 +19,11 @@ public sealed record CharacterRequestDto(
     string Profession,
     DateTime Born,
     DateTime Died,
-    IReadOnlyCollection<OfficeRequestDto> Offices
+    string PortraitUrl,
+    IReadOnlyCollection<OfficeRequestDto> Offices,
+    IReadOnlyCollection<FactionRequestDto> Factions
     )
 {
     public static implicit operator Character(CharacterRequestDto r) =>
-        new(r.Name, r.Profession, r.Born, r.Died);
+        new(r.Name, r.Profession, r.Born, r.Died, new Portrait(r.PortraitUrl));
 }

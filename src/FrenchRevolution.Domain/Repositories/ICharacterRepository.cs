@@ -13,6 +13,7 @@ public interface ICharacterRepository
         CancellationToken ct = default
         );
     Task<Character?> GetByIdAsync(Guid id, CancellationToken ct = default);
+    Task<Character?> GetByNameAsync(string name, CancellationToken ct = default);
     Guid Add(Character character);
     void Update(Character character);
     void Remove(Character character);

@@ -1,4 +1,5 @@
 using FrenchRevolution.Domain.Data;
+using FrenchRevolution.Domain.Primitives;
 using FrenchRevolution.Domain.Repositories;
 
 namespace FrenchRevolution.IntegrationTests.Helpers;
@@ -6,11 +7,14 @@ namespace FrenchRevolution.IntegrationTests.Helpers;
 public class TestDataBuilder(
     IOfficeRepository officeRepository,
     ICharacterRepository characterRepository,
+    IFactionRepository factionRepository,
     IUnitOfWork unitOfWork)
 {
     public OfficeBuilder CreateOffice() => new(officeRepository);
-    
-    public CharacterBuilder CreateCharacter() => new(characterRepository, officeRepository);
+
+    public CharacterBuilder CreateCharacter() => new(characterRepository, officeRepository, factionRepository);
+
+    public FactionBuilder CreateFaction() => new(factionRepository);
 
     public async Task SaveAsync() => await unitOfWork.SaveChangesAsync();
 }
@@ -37,13 +41,40 @@ public class OfficeBuilder(IOfficeRepository repository)
     }
 }
 
-public class CharacterBuilder(ICharacterRepository characterRepository, IOfficeRepository officeRepository)
+public class FactionBuilder(IFactionRepository repository)
+{
+    private Faction? _faction;
+
+    public FactionBuilder WithTitleAndDescription(string title, string description)
+    {
+        _faction = new Faction(title, description);
+        return this;
+    }
+
+    public Faction Build()
+    {
+        if (_faction is null)
+        {
+            throw new InvalidOperationException("Faction not configured. Call WithTitleAndDescription first.");
+        }
+
+        repository.Add(_faction);
+        return _faction;
+    }
+}
+
+public class CharacterBuilder(
+    ICharacterRepository characterRepository,
+    IOfficeRepository officeRepository,
+    IFactionRepository factionRepository)
 {
     private string _name = "Test Character";
     private string _profession = "Test Profession";
     private DateTime _born = new(1750, 1, 1);
     private DateTime _died = new(1800, 1, 1);
+    private Portrait _portrait = new("https://upload.wikimedia.org/wikipedia/commons/5/57/Anonymous_-_Prise_de_la_Bastille.jpg");
     private readonly List<(string officeTitle, DateTime from, DateTime to)> _offices = [];
+    private readonly List<string> _factions = [];
 
     public CharacterBuilder WithName(string name)
     {
@@ -64,15 +95,27 @@ public class CharacterBuilder(ICharacterRepository characterRepository, IOfficeR
         return this;
     }
 
+    public CharacterBuilder WithPortrait(Portrait portrait)
+    {
+        _portrait = portrait;
+        return this;
+    }
+
     public CharacterBuilder WithOffice(string officeTitle, DateTime from, DateTime to)
     {
         _offices.Add((officeTitle, from, to));
         return this;
     }
 
+    public CharacterBuilder WithFaction(string factionTitle)
+    {
+        _factions.Add(factionTitle);
+        return this;
+    }
+
     public Character Build()
     {
-        var character = new Character(_name, _profession, _born, _died);
+        var character = new Character(_name, _profession, _born, _died, _portrait);
 
         foreach (var (officeTitle, from, to) in _offices)
         {
@@ -84,6 +127,18 @@ public class CharacterBuilder(ICharacterRepository characterRepository, IOfficeR
             }
 
             character.AssignOffice(office, from, to);
+        }
+
+        foreach (var factionTitle in _factions)
+        {
+            var faction = factionRepository.GetByTitleAsync(factionTitle).GetAwaiter().GetResult();
+            if (faction is null)
+            {
+                faction = new Faction(factionTitle, string.Empty);
+                factionRepository.Add(faction);
+            }
+
+            character.AssignFaction(faction);
         }
 
         characterRepository.Add(character);

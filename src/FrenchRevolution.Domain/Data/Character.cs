@@ -4,19 +4,25 @@ using FrenchRevolution.Domain.Primitives;
 namespace FrenchRevolution.Domain.Data;
 
 public sealed class Character : Entity
-{ 
+{
     public string Name { get; private set; }
+    public string NormalizedName { get; private set; }
     public string Profession { get; private set; }
     public List<CharacterOffice> CharacterOffices { get; private set; } = [];
+    public List<CharacterFaction> CharacterFactions { get; private set; } = [];
     public DateTime Born { get; private set; }
     public DateTime Died { get; private set; }
+
+    public Portrait Portrait { get; private set; }
     
+    private Character() { }
     
     public Character(
         string name, 
         string profession,
         DateTime born,
-        DateTime died
+        DateTime died,
+        Portrait portrait
         ) : base(Guid.NewGuid())
     {
         ValidateRequiredProperty(name, nameof(name));
@@ -24,16 +30,19 @@ public sealed class Character : Entity
         ValidateLifeSpan(born, died);
         
         Name = name;
+        NormalizedName = name.Trim().ToLowerInvariant();
         Profession = profession;
         Born = DateTime.SpecifyKind(born, DateTimeKind.Utc);
         Died = DateTime.SpecifyKind(died, DateTimeKind.Utc);
+        Portrait = portrait;
     }
 
     public void Update(
         string name, 
         string profession, 
         DateTime born, 
-        DateTime died
+        DateTime died,
+        Portrait portrait
         )
     {
         ValidateRequiredProperty(name, nameof(name));
@@ -41,11 +50,13 @@ public sealed class Character : Entity
         ValidateLifeSpan(born, died);
         
         Name = name;
+        NormalizedName = name.Trim().ToLowerInvariant();
         Profession = profession;
         Born = DateTime.SpecifyKind(born, DateTimeKind.Utc);
         Died = DateTime.SpecifyKind(died, DateTimeKind.Utc);
+        Portrait = portrait;
     }
-    
+
     public void AssignOffice(Office office, DateTime from, DateTime to)
     {
         if (from > to)
@@ -66,6 +77,17 @@ public sealed class Character : Entity
     {
         CharacterOffices.Clear();
         CharacterOffices.AddRange(newOffices);
+    }
+
+    public void AssignFaction(Faction faction)
+    {
+        var characterFaction = new CharacterFaction(Id, faction.Id);
+        CharacterFactions.Add(characterFaction);
+    }
+
+    public void ClearFactions()
+    {
+        CharacterFactions.Clear();
     }
 
     private static void ValidateRequiredProperty(string value, string propertyName)

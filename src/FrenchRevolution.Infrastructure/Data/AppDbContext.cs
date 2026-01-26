@@ -11,6 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Character> Characters => Set<Character>();
     public DbSet<Office> Offices => Set<Office>();
     public DbSet<CharacterOffice> CharacterOffices => Set<CharacterOffice>();
+    public DbSet<Faction> Factions => Set<Faction>();
+    public DbSet<CharacterFaction> CharacterFactions => Set<CharacterFaction>();
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

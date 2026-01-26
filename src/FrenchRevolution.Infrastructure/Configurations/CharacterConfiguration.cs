@@ -1,3 +1,4 @@
+using FrenchRevolution.Domain.Constants;
 using FrenchRevolution.Domain.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,7 +17,13 @@ internal class CharacterConfiguration : IEntityTypeConfiguration<Character>
         builder.Property(p => p.Name)
             .IsRequired()
             .HasMaxLength(128);
-        
+
+        builder.Property(p => p.NormalizedName)
+            .IsRequired()
+            .HasMaxLength(128);
+
+        builder.HasIndex(p => p.NormalizedName).IsUnique();
+
         builder.Property(p => p.Profession)
             .IsRequired()
             .HasMaxLength(128);
@@ -33,11 +40,23 @@ internal class CharacterConfiguration : IEntityTypeConfiguration<Character>
                 v => v,
                 v => DateTime.SpecifyKind(v, DateTimeKind.Utc));
         
+        builder.OwnsOne(c => c.Portrait, navigation =>
+        {
+            navigation.Property(p => p.Url)
+                .HasColumnName(ColumnNames.PortraitUrl)
+                .HasMaxLength(512);
+        });
+        
         builder.HasMany(c => c.CharacterOffices)
             .WithOne(cr => cr.Character)
             .HasForeignKey(cr => cr.CharacterId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
+        builder.HasMany(c => c.CharacterFactions)
+            .WithOne(cf => cf.Character)
+            .HasForeignKey(cf => cf.CharacterId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         builder.Property<uint>("RowVersion").IsRowVersion();
         
         builder.HasQueryFilter(p => !p.IsDeleted); 

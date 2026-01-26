@@ -1,8 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace FrenchRevolution.Contracts.Models;
 
 public class PagedList<T>
 {
-    private PagedList(IReadOnlyList<T> items, int page, int pageSize, int totalCount)
+    [JsonConstructor]
+    private PagedList(IReadOnlyList<T> items, int page, int pageSize, long totalCount)
     {
         Items = items;
         Page = page;
@@ -11,8 +14,8 @@ public class PagedList<T>
     }
     
     public IReadOnlyList<T> Items { get; }
-    public int Page { get;}
-    public int PageSize { get;}
+    public int Page { get; }
+    public int PageSize { get; }
     public long TotalCount { get; }
     public bool HasNextPage => Page * PageSize < TotalCount;
     public bool HasPreviousPage => Page > 1;

@@ -8,10 +8,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrenchRevolution.Application.Controllers;
 
+/// <summary>
+/// API endpoints for managing characters in the French Revolution domain.
+/// </summary>
 public class CharacterController(ISender sender) : BaseApiController
 {
+    /// <param name="name">Optional filter by name.</param>
+    /// <param name="sortColumn">Column to sort on.</param>
+    /// <param name="sortOrder">"asc" or "desc".</param>
+    /// <param name="page">Page number (1‑based).</param>
+    /// <param name="pageSize">Items per page.</param>
+    /// <returns>A paged list of <see cref="CharacterResponseDto"/>.</returns>
     [HttpGet] 
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Member}")]
     public async Task<ActionResult<PagedList<CharacterResponseDto>>> GetAll(
         [FromQuery] string? name,
         [FromQuery] string? sortColumn,
@@ -33,7 +41,6 @@ public class CharacterController(ISender sender) : BaseApiController
     }
     
     [HttpGet("{id:guid}")]
-    [Authorize(Roles = $"{Roles.Admin},{Roles.Member}")]
     public async Task<ActionResult<CharacterResponseDto>> GetById(Guid id)
     {
         var character = await sender.Send(new GetCharacterByIdQuery(id));
