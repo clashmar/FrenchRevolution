@@ -35,7 +35,7 @@
  
   db-service:
     image: postgres:15
-    container_name: db
+    container_name: db-service
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
@@ -50,6 +50,7 @@
       interval: 5s
       timeout: 5s
       retries: 5
+      start_period: 30s
       
   db-admin:
     image: dpage/pgadmin4:9
