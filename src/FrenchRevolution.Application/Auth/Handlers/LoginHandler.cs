@@ -1,17 +1,10 @@
-using System.Security.Claims;
-using System.Text;
 using FrenchRevolution.Application.Abstractions;
 using FrenchRevolution.Application.Auth.Commands;
 using FrenchRevolution.Application.Auth.Services;
-using FrenchRevolution.Application.Config;
 using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.Infrastructure.Data;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using JwtRegisteredClaimNames = System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames;
 
 namespace FrenchRevolution.Application.Auth.Handlers;
 

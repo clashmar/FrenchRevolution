@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FrenchRevolution.Application.Controllers;
 
+/// <summary>
+/// API endpoints for managing factions.
+/// </summary>
 public class FactionController(ISender sender) : BaseApiController
 {
     [HttpGet]
@@ -16,6 +19,7 @@ public class FactionController(ISender sender) : BaseApiController
         return Ok(factions);
     }
 
+    /// <param name="id">The unique identifier of the faction.</param>
     [HttpGet("{id:guid}")]
     [Authorize(Roles = $"{Roles.Admin},{Roles.Member}")]
     public async Task<ActionResult<FactionResponseDto>> GetById(Guid id)

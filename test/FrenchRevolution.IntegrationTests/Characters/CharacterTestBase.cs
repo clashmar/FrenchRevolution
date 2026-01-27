@@ -1,3 +1,4 @@
+using FrenchRevolution.Domain.Data;
 using FrenchRevolution.Domain.Repositories;
 using FrenchRevolution.Infrastructure.Cache;
 using FrenchRevolution.Infrastructure.Data;
@@ -17,14 +18,13 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
 {
     protected ICacheAside CacheAside = null!;
     protected ICharacterRepository CharacterRepository = null!;
-    
+    protected IOfficeRepository OfficeRepository = null!;
+    protected IFactionRepository FactionRepository = null!;
+    protected IUnitOfWork UnitOfWork = null!;
+
     private AppDbContext _dbContext = null!;
     private TestDataBuilder _testData = null!;
-    
     private IDistributedCache _distributedCache = null!;
-    private IOfficeRepository _officeRepository = null!;
-    private IFactionRepository _factionRepository = null!;
-    private IUnitOfWork _unitOfWork = null!;
     
     // Character names
     protected const string GeorgesDanton = "Georges Jacques Danton";
@@ -44,6 +44,9 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
     protected static readonly DateTime From = new(1791, 5, 6);
     protected static readonly DateTime To = new(1794, 5, 6);
 
+    // Portrait URL
+    protected const string DefaultPortraitUrl = "https://upload.wikimedia.org/wikipedia/commons/5/57/Anonymous_-_Prise_de_la_Bastille.jpg";
+
     public async Task InitializeAsync()
     {
         await databaseFixture.ResetDatabaseAsync();
@@ -56,30 +59,33 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
         CacheAside = new CacheAside(_distributedCache, mockCacheLogger.Object);
         
         CharacterRepository = new CharacterRepository(_dbContext);
-        _officeRepository = new OfficeRepository(_dbContext);
-        _factionRepository = new FactionRepository(_dbContext);
-        _unitOfWork = new UnitOfWork(_dbContext);
-        _testData = new TestDataBuilder(_officeRepository, CharacterRepository, _factionRepository, _unitOfWork);
+        OfficeRepository = new OfficeRepository(_dbContext);
+        FactionRepository = new FactionRepository(_dbContext);
+        UnitOfWork = new UnitOfWork(_dbContext);
+        _testData = new TestDataBuilder(OfficeRepository, CharacterRepository, FactionRepository, UnitOfWork);
     }
     
-    /// Builds and adds a character with the given name
-    /// and optional profession and role to the test db.
-    protected async Task SetupCharacter(
+    protected async Task<Character> SetupCharacter(
         string name,
         string profession = Lawyer,
-        string roleTitle = Deputy
-        )
+        string roleTitle = Deputy,
+        string? factionTitle = null)
     {
-        _testData.CreateCharacter()
+        var builder = _testData.CreateCharacter()
             .WithName(name)
             .WithProfession(profession)
             .WithDates(From, To)
-            .WithOffice(roleTitle, 
-                From, 
-                To)
-            .Build();
+            .WithOffice(roleTitle, From, To);
 
+        if (factionTitle is not null)
+        {
+            builder.WithFaction(factionTitle);
+        }
+
+        var character = builder.Build();
         await _testData.SaveAsync();
+        _dbContext.ChangeTracker.Clear();
+        return character;
     }
     
     /// Batch setup for multiple characters
@@ -98,6 +104,7 @@ public class CharacterTestBase(DatabaseFixture databaseFixture) : IAsyncLifetime
         }
         
         await _testData.SaveAsync();
+        _dbContext.ChangeTracker.Clear();
     }
 
     public async Task DisposeAsync()

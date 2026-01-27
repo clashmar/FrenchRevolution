@@ -18,7 +18,6 @@ public class CharacterController(ISender sender) : BaseApiController
     /// <param name="sortOrder">"asc" or "desc".</param>
     /// <param name="page">Page number (1‑based).</param>
     /// <param name="pageSize">Items per page.</param>
-    /// <returns>A paged list of <see cref="CharacterResponseDto"/>.</returns>
     [HttpGet] 
     public async Task<ActionResult<PagedList<CharacterResponseDto>>> GetAll(
         [FromQuery] string? name,
@@ -40,6 +39,7 @@ public class CharacterController(ISender sender) : BaseApiController
         return Ok(characters);
     }
     
+    /// <param name="id">The unique identifier of the character.</param>
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<CharacterResponseDto>> GetById(Guid id)
     {
@@ -50,6 +50,7 @@ public class CharacterController(ISender sender) : BaseApiController
             Ok(character);
     }
 
+    /// <param name="request">The character data to create.</param>
     [HttpPost]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<Guid>> Create(CharacterRequestDto request)
@@ -61,6 +62,8 @@ public class CharacterController(ISender sender) : BaseApiController
             guid); 
     }
 
+    /// <param name="id">The unique identifier of the character to update.</param>
+    /// <param name="request">The updated character data.</param>
     [HttpPut("{id:guid}")]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult<CharacterResponseDto>> Update(Guid id, CharacterRequestDto request)
@@ -71,7 +74,8 @@ public class CharacterController(ISender sender) : BaseApiController
             : NotFound("Unable to update character.");
     }
 
-    [HttpDelete("{id:guid}")] 
+    /// <param name="id">The unique identifier of the character to delete.</param>
+    [HttpDelete("{id:guid}")]
     [Authorize(Roles = Roles.Admin)]
     public async Task<ActionResult> Delete(Guid id)
     {

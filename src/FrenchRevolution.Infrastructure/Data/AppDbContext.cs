@@ -42,9 +42,20 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
 
         foreach (var entityEntry in softDeleteEntries)
         {
-            entityEntry.State = EntityState.Modified; 
+            entityEntry.State = EntityState.Unchanged;
+
+            foreach (var reference in entityEntry.References)
+            {
+                if (reference.TargetEntry?.State == EntityState.Deleted)
+                {
+                    reference.TargetEntry.State = EntityState.Unchanged;
+                }
+            }
+
             entityEntry.Property(nameof(ISoftDeletable.IsDeleted)).CurrentValue = true;
+            entityEntry.Property(nameof(ISoftDeletable.IsDeleted)).IsModified = true;
             entityEntry.Property(nameof(ISoftDeletable.DeletedAt)).CurrentValue = DateTime.UtcNow;
+            entityEntry.Property(nameof(ISoftDeletable.DeletedAt)).IsModified = true;
         }
         
         var result = await base.SaveChangesAsync(cancellationToken);

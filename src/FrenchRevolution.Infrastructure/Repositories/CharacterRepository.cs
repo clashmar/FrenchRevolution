@@ -53,12 +53,10 @@ public class CharacterRepository(
     public async Task<Character?> GetByIdAsync(Guid id, CancellationToken ct  = default)
     {
         return await context.Characters
-            .AsNoTracking()
             .Include(c => c.CharacterOffices)
             .ThenInclude(cr => cr.Office)
             .Include(c => c.CharacterFactions)
             .ThenInclude(cf => cf.Faction)
-            .AsSplitQuery()
             .FirstOrDefaultAsync(c => c.Id == id, ct);
     }
 
