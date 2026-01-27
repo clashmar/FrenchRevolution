@@ -1,0 +1,133 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Characters";
+}
+
+<div class="mb-6 flex flex-wrap justify-between items-center gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800">Characters</h1>
+        <p class="text-gray-600 mt-1">Manage the key figures of the Revolution</p>
+    </div>
+    <a href="/Admin/Characters/Create" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors whitespace-nowrap">
+        Add Character
+    </a>
+</div>
+
+<div class="mb-4 bg-white rounded-lg shadow-md p-4">
+    <form method="get" class="flex flex-wrap items-center gap-4">
+        <input type="hidden" name="sortColumn" value="@Model.SortColumn" />
+        <input type="hidden" name="sortOrder" value="@Model.SortOrder" />
+        <div class="flex-1 min-w-48">
+            <input type="text"
+                   name="nameFilter"
+                   value="@Model.NameFilter"
+                   placeholder="Search by name..."
+                   class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" />
+        </div>
+        <button type="submit" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-secondary transition-colors whitespace-nowrap">
+            Search
+        </button>
+        @if (!string.IsNullOrEmpty(Model.NameFilter))
+        {
+            <a href="/Admin/Characters" class="text-gray-600 hover:text-gray-800 whitespace-nowrap">Clear</a>
+        }
+    </form>
+</div>
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200 table-fixed">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="w-2/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <a href="@Model.GetSortUrl("name")" class="hover:text-gray-700">Name@(Model.GetSortIndicator("name"))</a>
+                </th>
+                <th class="w-1/5 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <a href="@Model.GetSortUrl("profession")" class="hover:text-gray-700">Profession@(Model.GetSortIndicator("profession"))</a>
+                </th>
+                <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <a href="@Model.GetSortUrl("born")" class="hover:text-gray-700">Born@(Model.GetSortIndicator("born"))</a>
+                </th>
+                <th class="w-1/6 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <a href="@Model.GetSortUrl("died")" class="hover:text-gray-700">Died@(Model.GetSortIndicator("died"))</a>
+                </th>
+                <th class="w-1/12 px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            @if (Model.Characters.Items.Count == 0)
+            {
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                        @if (!string.IsNullOrEmpty(Model.NameFilter))
+                        {
+                            <span>No characters found matching "@Model.NameFilter". <a href="/Admin/Characters" class="text-primary hover:underline">Clear Filter</a></span>
+                        }
+                        else
+                        {
+                            <span>No characters found. <a href="/Admin/Characters/Create" class="text-primary hover:underline">Add one</a></span>
+                        }
+                    </td>
+                </tr>
+            }
+            @foreach (var character in Model.Characters.Items)
+            {
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            @if (!string.IsNullOrEmpty(character.PortraitUrl))
+                            {
+                                <img src="@character.PortraitUrl" alt="@character.Name" class="w-10 h-10 rounded-full object-cover mr-3" />
+                            }
+                            else
+                            {
+                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                                    <span class="text-gray-500 text-sm">@character.Name[0]</span>
+                                </div>
+                            }
+                            <span class="font-medium text-gray-900 truncate max-w-xs">@character.Name</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600 truncate">@character.Profession</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">@character.Born.ToString("MMM d, yyyy")</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-gray-600">@character.Died.ToString("MMM d, yyyy")</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="/Admin/Characters/Edit/@character.Id" class="text-primary hover:text-secondary mr-4">Edit</a>
+                        <a href="/Admin/Characters/Delete/@character.Id" class="text-red-600 hover:text-red-800">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@{
+    var totalPages = Model.Characters.PageSize > 0
+        ? (int)Math.Ceiling((double)Model.Characters.TotalCount / Model.Characters.PageSize)
+        : 0;
+}
+@if (totalPages > 1)
+{
+    <div class="mt-6 flex justify-center">
+        <nav class="inline-flex rounded-md shadow-sm">
+            @if (Model.Characters.HasPreviousPage)
+            {
+                <a href="@Model.GetPageUrl(Model.Characters.Page - 1)" class="px-3 py-2 border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 rounded-l-md">
+                    Previous
+                </a>
+            }
+            @for (var i = 1; i <= totalPages; i++)
+            {
+                <a href="@Model.GetPageUrl(i)" class="px-3 py-2 border-t border-b border-gray-300 @(i == Model.Characters.Page ? "bg-primary text-white" : "bg-white text-gray-500 hover:bg-gray-50")">
+                    @i
+                </a>
+            }
+            @if (Model.Characters.HasNextPage)
+            {
+                <a href="@Model.GetPageUrl(Model.Characters.Page + 1)" class="px-3 py-2 border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 rounded-r-md">
+                    Next
+                </a>
+            }
+        </nav>
+    </div>
+}

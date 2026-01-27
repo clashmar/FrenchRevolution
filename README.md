@@ -4,7 +4,7 @@
 
 ### "Liberté, Égalité, Fraternité"
 
-A simple .NET 10 Web API using modern backend development patterns. 
+A simple .NET 10 Web API using ASP.NET and modern backend development patterns. 
 The French Revolution provides a backdrop to showcase clean, CQRS 
 architecture and Domain-Driven Design.
 
@@ -70,9 +70,12 @@ cd FrenchRevolution
 docker compose up
 ```
 
-4. Wait for the db-service to be healthy and for the API to run migrations
-and seed the database. An admin user will be created with ADMIN_EMAIL and 
-ADMIN_PASSWORD as credentials. 
+4. Wait for the application to run migrations and seed the database once
+db-service is healthy. An admin user will be created with your ADMIN_EMAIL 
+values and ADMIN_PASSWORD as credentials, which can also be used to access 
+the PostgreSQL admin UI. 
+5. The Aspire token can be found in the logs of the
+dashboard container.
 
 ### Access Points
 
@@ -103,7 +106,7 @@ cd FrenchRevolution
 helm install french-revolution ./k8s/french-revolution
 ```
 
-The most up to date image of `main` is always pushed to the 
+The latest image is always available from the 
 [public Docker repository](https://hub.docker.com/r/clashmarr/frenchrevolution) 
 and will be used by `values.yaml`. Everything is currently 
 configured for local development but can be extended easily for 
@@ -120,6 +123,7 @@ state demonstrates a good fundamental understanding of .NET development.
 That being said, these are some patterns and tools I would like to add at
 some point, or maybe to a different project:
 
+- Polly
 - Minimal APIs
 - Dapper ORM 
 - HATEOAS links

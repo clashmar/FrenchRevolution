@@ -1,0 +1,122 @@
+@page
+@model CreateModel
+@{
+    ViewData["Title"] = "Create Character";
+}
+
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Create Character</h1>
+    <p class="text-gray-600 mt-1">Add a new figure from the revolution!</p>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6">
+    <form method="post" id="characterForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label asp-for="Input.Name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                <input asp-for="Input.Name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                <span asp-validation-for="Input.Name" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Input.Profession" class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+                <input asp-for="Input.Profession" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                <span asp-validation-for="Input.Profession" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Input.Born" class="block text-sm font-medium text-gray-700 mb-1">Born</label>
+                <input asp-for="Input.Born" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                <span asp-validation-for="Input.Born" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Input.Died" class="block text-sm font-medium text-gray-700 mb-1">Died</label>
+                <input asp-for="Input.Died" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                <span asp-validation-for="Input.Died" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="md:col-span-2">
+                <label asp-for="Input.PortraitUrl" class="block text-sm font-medium text-gray-700 mb-1">Portrait URL</label>
+                <input asp-for="Input.PortraitUrl" type="url" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="https://example.com/portrait.jpg" />
+                <span asp-validation-for="Input.PortraitUrl" class="text-red-500 text-sm"></span>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <div class="flex justify-between items-center mb-3">
+                <label class="block text-sm font-medium text-gray-700">Offices</label>
+                <button type="button" onclick="addOffice()" class="text-sm text-primary hover:text-secondary">+ Add Office</button>
+            </div>
+            <div id="offices-container" class="space-y-3">
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <div class="flex justify-between items-center mb-3">
+                <label class="block text-sm font-medium text-gray-700">Factions</label>
+                <button type="button" onclick="addFaction()" class="text-sm text-primary hover:text-secondary">+ Add Faction</button>
+            </div>
+            <div id="factions-container" class="space-y-3">
+            </div>
+        </div>
+
+        <div class="mt-8 flex justify-end space-x-4">
+            <a href="/Admin/Characters" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Cancel</a>
+            <button type="submit" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Create Character</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        let officeIndex = 0;
+        let factionIndex = 0;
+
+        function addOffice() {
+            const container = document.getElementById('offices-container');
+            const div = document.createElement('div');
+            div.className = 'flex gap-3 items-start p-3 bg-gray-50 rounded-lg';
+            div.innerHTML = `
+                <div class="flex-1">
+                    <input type="text" name="Input.Offices[${officeIndex}].Title" placeholder="Title"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div class="flex-1">
+                    <input type="date" name="Input.Offices[${officeIndex}].From"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <div class="flex-1">
+                    <input type="date" name="Input.Offices[${officeIndex}].To"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            `;
+            container.appendChild(div);
+            officeIndex++;
+        }
+
+        function addFaction() {
+            const container = document.getElementById('factions-container');
+            const div = document.createElement('div');
+            div.className = 'flex gap-3 items-start p-3 bg-gray-50 rounded-lg';
+            div.innerHTML = `
+                <div class="flex-1">
+                    <input type="text" name="Input.Factions[${factionIndex}].Title" placeholder="Faction title"
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" />
+                </div>
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 p-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            `;
+            container.appendChild(div);
+            factionIndex++;
+        }
+    </script>
+}

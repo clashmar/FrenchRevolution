@@ -47,6 +47,14 @@ builder.Services
             });
     });
 
+// Razor Pages for Admin Panel
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Admin", "AdminPolicy");
+    options.Conventions.AllowAnonymousToPage("/Admin/Login");
+    options.Conventions.AllowAnonymousToPage("/Admin/AccessDenied");
+});
+
 builder.Services.AddProblemDetails(cfg =>
 {
     cfg.CustomizeProblemDetails = context =>
@@ -142,9 +150,24 @@ builder.Services
             ValidAudience = jwtConfig?.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig?.SecretKey!)),
         };
+    })
+    .AddCookie("AdminCookie", options =>
+    {
+        options.LoginPath = "/Admin/Login";
+        options.AccessDeniedPath = "/Admin/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(8);
+        options.SlidingExpiration = true;
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+    {
+        policy.AuthenticationSchemes.Add("AdminCookie");
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole(Roles.Admin);
+    });
+});
 
 // Mediator
 builder.Services.AddMediatR(cfg =>
@@ -214,15 +237,21 @@ app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
 
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.MapHealthChecks("/healthz");
 
 app.UseHttpsRedirection();
 
-app.MapControllers().RequireRateLimiting(RateLimiting.FixedWindow);
+app.UseStaticFiles();
 
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapControllers().RequireRateLimiting(RateLimiting.FixedWindow);
+
+app.MapRazorPages();
 
 app.UseRateLimiter();
 
