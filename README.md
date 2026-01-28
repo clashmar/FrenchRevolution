@@ -11,7 +11,7 @@ architecture and Domain-Driven Design.
 ## Key Features
 
 - CQRS pattern using MediatR
-- Role based authentication using JWT and Cooakies
+- Role based authentication using JWT and Cookies
 - PostgreSQL database and Entity Framework Core
 - Redis distributed caching using a cache-aside pattern
 - OpenTelemetry (tracing, metrics, logging) via an Aspire dashboard
