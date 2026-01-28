@@ -11,12 +11,12 @@ architecture and Domain-Driven Design.
 ## Key Features
 
 - CQRS pattern using MediatR
-- JWT authentication with role-based authorization
-- PostgreSQL database and Entity Framework Core ORM
-- Redis distributed caching using cache-aside pattern
+- Role based authentication using JWT and Cooakies
+- PostgreSQL database and Entity Framework Core
+- Redis distributed caching using a cache-aside pattern
 - OpenTelemetry (tracing, metrics, logging) via an Aspire dashboard
 - Rate limiting and health checks
-- Docker and Kubernetes
+- Docker and Kubernetes ready
 - Comprehensive and fast integration tests using xUnit, Test Containers 
 and Respawner
 - CI pipeline using GitHub actions for test/coverage reports and updating
@@ -72,7 +72,7 @@ docker compose up
 
 4. Wait for the application to run migrations and seed the database once
 db-service is healthy. An admin user will be created with your ADMIN_EMAIL 
-values and ADMIN_PASSWORD as credentials, which can also be used to access 
+and ADMIN_PASSWORD values as credentials, which can also be used to access 
 the PostgreSQL admin UI. 
 5. The Aspire token can be found in the logs of the
 dashboard container.

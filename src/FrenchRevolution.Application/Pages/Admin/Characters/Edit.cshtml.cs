@@ -77,8 +77,15 @@ public class EditModel(
             offices,
             factions);
 
-        await sender.Send(new UpdateCharacterCommand(Id, request));
-
-        return RedirectToPage("Index");
+        try
+        {
+            await sender.Send(new UpdateCharacterCommand(Id, request));
+            return RedirectToPage("Index");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("Input.Name", ex.Message);
+            return Page();
+        }
     }
 }

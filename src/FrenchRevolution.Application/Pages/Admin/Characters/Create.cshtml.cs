@@ -1,6 +1,7 @@
 using FrenchRevolution.Application.Characters.Commands;
 using FrenchRevolution.Contracts.Models;
 using FrenchRevolution.Contracts.Models.Pages;
+using FrenchRevolution.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -44,8 +45,15 @@ public class CreateModel(ISender sender) : PageModel
             offices,
             factions);
 
-        await sender.Send(new CreateCharacterCommand(request));
-
-        return RedirectToPage("Index");
+        try
+        {
+            await sender.Send(new CreateCharacterCommand(request));
+            return RedirectToPage("Index");
+        }
+        catch (Exception ex)
+        {
+            ModelState.AddModelError("Input.Name", ex.Message);
+            return Page();
+        }
     }
 }
