@@ -8,8 +8,10 @@ public sealed class Portrait : ValueObject
     
     public Portrait(string url)
     {
-        if (string.IsNullOrWhiteSpace(url) ||
-            !Uri.IsWellFormedUriString(url, UriKind.Absolute))
+        if (string.IsNullOrWhiteSpace(url)
+            // TODO: Use regex instead
+            // || !Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            )
         {
             throw new InvalidPortraitException(url);
         }

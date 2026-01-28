@@ -8,4 +8,5 @@ public static class QueryValues
     public const string Desc = "desc";
     public const string Born = "born";
     public const string Died = "died";
+    public const string Profession = "profession";
 }

@@ -1,0 +1,28 @@
+@page "{id:guid}"
+@model DeleteModel
+@{
+    ViewData["Title"] = "Delete Character";
+}
+
+<div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Delete Character</h1>
+    <p class="text-gray-600 mt-1">Are you sure you want to delete this character?</p>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6 max-w-2xl">
+    <partial name="_CharacterCard" model="Model.Character" />
+
+    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <p class="text-red-700 text-sm">
+            Are you sure?
+        </p>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Id" />
+        <div class="flex justify-end space-x-4">
+            <a href="/Admin/Characters" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Cancel</a>
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete Character</button>
+        </div>
+    </form>
+</div>

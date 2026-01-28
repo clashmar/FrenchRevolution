@@ -1,0 +1,66 @@
+@page
+@model LoginModel
+@{
+    ViewData["Title"] = "Admin Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - French Revolution Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e3a5f',
+                        secondary: '#2d5a87',
+                        accent: '#c92727'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-primary">French Revolution</h1>
+            <p class="text-gray-600 mt-2">Admin Panel Login</p>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                @Model.ErrorMessage
+            </div>
+        }
+
+        <form method="post">
+            <div class="mb-4">
+                <label asp-for="Input.Email" class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                <input asp-for="Input.Email" type="email"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                       placeholder="admin@example.com" />
+                <span asp-validation-for="Input.Email" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="Input.Password" class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                <input asp-for="Input.Password" type="password"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                       placeholder="Enter your password" />
+                <span asp-validation-for="Input.Password" class="text-red-500 text-sm"></span>
+            </div>
+
+            <button type="submit"
+                    class="w-full bg-primary text-white py-2 px-4 rounded-lg hover:bg-secondary transition-colors font-medium">
+                Sign In
+            </button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+@page "{id:guid}"
+@model ViewModel
+@{
+    ViewData["Title"] = "Character Details";
+}
+
+<div class="mb-6 flex flex-wrap justify-between items-center gap-4">
+    <div>
+        <h1 class="text-3xl font-bold text-gray-800">Character Details</h1>
+        <a href="/Admin/Characters" class="text-primary hover:text-secondary text-sm underline">&larr; Back to characters</a>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-md p-6 max-w-2xl">
+    <partial name="_CharacterCard" model="Model.Character" />
+
+    <div class="flex justify-end space-x-4 mt-6 pt-6 border-t border-gray-200">
+        <a href="/Admin/Characters/Edit/@Model.Id" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary transition-colors">Edit</a>
+        <a href="/Admin/Characters/Delete/@Model.Id" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Delete</a>
+    </div>
+</div>

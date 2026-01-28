@@ -90,6 +90,7 @@ public class CharacterRepository(
         {
             QueryValues.Born => c => c.Born,
             QueryValues.Died => c => c.Died,
+            QueryValues.Profession => c => c.Profession,
             _ => c => c.Name
         };
     }
