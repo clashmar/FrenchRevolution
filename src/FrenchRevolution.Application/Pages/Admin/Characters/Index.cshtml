@@ -61,7 +61,7 @@
                     <td colspan="5" class="px-6 py-8 text-center text-gray-500">
                         @if (!string.IsNullOrEmpty(Model.NameFilter))
                         {
-                            <span>No characters found matching "@Model.NameFilter". <a href="/Admin/Characters" class="text-primary hover:underline">Clear Filter</a></span>
+                            <span>No characters found matching '@(Model.NameFilter)'. <a href="/Admin/Characters/Create" class="text-primary hover:underline">Add one</a></span>
                         }
                         else
                         {

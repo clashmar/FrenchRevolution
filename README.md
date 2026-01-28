@@ -21,6 +21,7 @@ architecture and Domain-Driven Design.
 and Respawner
 - CI pipeline using GitHub actions for test/coverage reports and updating
 public Docker image
+- Razor pages admin portal (built with Claude Code CLI)
 
 ## API Features
 
@@ -73,13 +74,15 @@ docker compose up
 4. Wait for the application to run migrations and seed the database once
 db-service is healthy. An admin user will be created with your ADMIN_EMAIL 
 and ADMIN_PASSWORD values as credentials, which can also be used to access 
-the PostgreSQL admin UI. 
-5. The Aspire token can be found in the logs of the
-dashboard container.
+the Admin portal and PostgreSQL admin UI. 
+5. The Aspire token needed for logging in to the dashboard can be found in the 
+logs of the dashboard container.
 
 ### Access Points
 
+- Landing page: http://localhost:5000/
 - Scalar UI: http://localhost:5000/scalar
+- Admin Portal: http://localhost:5000/Admin
 - Aspire Dashboard: http://localhost:18888
 - PostgresSQL Admin: http://localhost:8080
 
@@ -112,6 +115,9 @@ and will be used by `values.yaml`. Everything is currently
 configured for local development but can be extended easily for 
 production/staging environments.
 
+## Development Notes
+The Razor Pages admin portal was built using Claude Code CLI to demonstrate use
+of AI-assisted workflows. 
 
 ## Roadmap
 
@@ -119,7 +125,7 @@ This application is a means to practice and showcase the latest
 (.NET 10) backend technology and best practices. The API itself could of 
 course be extended with more endpoints (e.g historical events, places etc)
 and a modern front-end, but hopefully the application  in its current
-state demonstrates a good fundamental understanding of .NET development. 
+state provides a good fundamental understanding of .NET development. 
 That being said, these are some patterns and tools I would like to add at
 some point, or maybe to a different project:
 
