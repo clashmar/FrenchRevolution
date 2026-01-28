@@ -21,5 +21,13 @@
 **/obj
 **/secrets.dev.yaml
 **/values.dev.yaml
+k8s
+test
+**/compose.yaml
+.claude
+.containers
+nul
+.github
 LICENSE
 README.md
+CLAUDE.md

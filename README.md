@@ -96,7 +96,7 @@ logs of the dashboard container.
 | `/api/v1/auth/register` | User registration                                       |
 | `/healthz`              | Health check endpoint                                   |
 
-## Deployment
+## Kubernetes Deployment
 
 The application includes manifests and a Helm chart for deploying all 
 services to a Kubernetes cluser. Copy the contents of `secrets-template.yaml`
@@ -106,7 +106,13 @@ with your secrets.
 
 ```bash
 cd FrenchRevolution
-helm install french-revolution ./k8s/french-revolution
+cd k8s
+
+helm install api .\frenchrevolution\ \
+  --namespace frenchrevolution \
+  --create-namespace \
+  -f .\frenchrevolution\values.yaml \
+  -f .\frenchrevolution\secrets.yaml
 ```
 
 The latest image is always available from the 
@@ -117,7 +123,7 @@ production/staging environments.
 
 ## Development Notes
 The Razor Pages admin portal was built using Claude Code CLI to demonstrate use
-of AI-assisted workflows. 
+of AI-assisted workflows and provide a conveniant tool to demo the application.
 
 ## Roadmap
 

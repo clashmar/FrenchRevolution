@@ -30,7 +30,7 @@
         </button>
         @if (!string.IsNullOrEmpty(Model.NameFilter))
         {
-            <a href="/Admin/Characters" class="text-gray-600 hover:text-gray-800 whitespace-nowrap">Clear</a>
+            <a href="/Admin/Characters" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">Clear</a>
         }
     </form>
 </div>
@@ -85,7 +85,7 @@
                                     <span class="text-gray-500 text-sm">@character.Name[0]</span>
                                 </div>
                             }
-                            <span class="font-medium text-gray-900 truncate max-w-xs">@character.Name</span>
+                            <a href="/Admin/Characters/View/@character.Id" class="font-medium text-gray-900 truncate max-w-xs hover:text-primary">@character.Name</a>
                         </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-gray-600 truncate">@character.Profession</td>
